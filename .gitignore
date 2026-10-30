@@ -24,6 +24,7 @@
 venv/
 node_modules/
 __pycache__/
+*.egg-info/
 *.py[cod]
 .pytest_cache/
 .coverage

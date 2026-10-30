@@ -1,6 +1,6 @@
 # Foundation roadmap
 
-Status: proposed implementation plan, 30 October 2026. Milestones below are planned; publishing these documents does not mark their acceptance tests complete.
+Status: approved roadmap, 30 October 2026. M1 is in progress: the first implementation provides format-2 packages, sandbox installation state, a CLI and journaled file recovery. [Foundation implementation](FOUNDATION.md) records its exact scope. Real-game adapters and the public alpha gates remain unfulfilled.
 
 Build a reliable standalone extension platform before growing the add-on catalog. The first usable Hub release includes client modules, server modules and combined modules. Internal milestones are engineering checkpoints, not separate client-only product releases.
 
@@ -30,7 +30,7 @@ M2 and M3 can be developed as separate workstreams after M1, but M4 and the firs
 
 ## M0 Publication and design
 
-Choose the Hub license before importing implementation code. MIT is the initial recommendation because existing reusable Hub components carry MIT notices; preserve every applicable notice and review other dependencies separately. Public repository visibility alone does not grant an open-source license.
+MIT has been selected for the foundation. The reviewed source provenance is in [NOTICE.md](../NOTICE.md), and an exact [public file allowlist](../config/public-files.txt) is checked before publication. Preserve applicable notices and review each future dependency separately.
 
 Agree the package lifecycle, supported resource types, state ownership and adapter interfaces in [Architecture](ARCHITECTURE.md). Record decisions before treating draft interfaces as stable SDK promises. Establish public support/reporting routes and a license inventory for extracted code.
 
@@ -119,9 +119,9 @@ Begin with a small set of maintained add-ons after foundation acceptance. Librar
 
 | Decision | Recommendation | Resolve by |
 | --- | --- | --- |
-| Hub license | MIT for original platform code, preserving imported notices | Before source extraction |
+| Hub license | Decided: MIT, with original Hub attribution preserved | Recorded in LICENSE and NOTICE.md |
 | Runtime packaging | Pin one tested host Python/toolchain; ship a self-contained Windows distribution if practical | Before M5 acceptance |
-| Manifest evolution | Version the new component model; provide an explicit reader/migration path for supported legacy packages | M1 |
+| Manifest evolution | Experimental format 2 implemented; legacy format 1 is rejected until an explicit migration reader is built | Legacy support before M5 migration |
 | Game support policy | Publish a finite tested adapter/build matrix and capability requirements | M2 and M3 |
 | Persistent table support | Start with quest/config state; add a migration provider only when a reference module needs it | Before accepting such modules |
 | Upstream cooperation | Prepare and test fallback contracts now; discuss official hooks after the foundation demonstration | After M4 |

@@ -20,7 +20,7 @@ Follow [Create your first sandbox add-on](docs/CREATING_ADDONS.md) to edit, inst
 
 For engineering details and tests, see the [foundation contracts](docs/FOUNDATION.md). MIT license and source attribution are in [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 
-For integration development, [`new --profile game`](docs/GAME_CREATORS.md) creates an original client window, a server greeting quest, or both. It uses the same manifest and builder. The client runtime and [shared lifecycle bridge](docs/CLIENT_HOOKS.md) have synthetic tests and a local native UI demonstration; [quest-staging checks](docs/QUEST_STAGING.md) validate source identities and compiler-output ownership. Real installation, production startup, connected gameplay and general build compatibility remain unverified.
+For integration development, [`new --profile game`](docs/GAME_CREATORS.md) creates an original client window, a server greeting quest, or both. It uses the same manifest and builder. The client runtime, [shared lifecycle bridge](docs/CLIENT_HOOKS.md), and [startup bundle/safe mode](docs/CLIENT_STARTUP.md) have synthetic tests and local native demonstrations; [quest-staging checks](docs/QUEST_STAGING.md) validate source identities and compiler-output ownership. Real installation, normal launcher integration, connected gameplay and general build compatibility remain unverified.
 
 ## Inspect a game folder
 

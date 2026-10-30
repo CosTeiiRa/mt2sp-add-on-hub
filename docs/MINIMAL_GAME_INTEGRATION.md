@@ -46,6 +46,8 @@ The standalone lifecycle runtime and separate [shared Open/Close bridge](CLIENT_
 
 Use one host-owned bootstrap. At client startup it reads the verified enabled-package list and loads each module's `main.py` in its own namespace. Imports between a module's helper files go through `context.module(name)`; an author need not construct private loader paths. Loading one add-on must not replace another add-on's module in the interpreter cache.
 
+The [client preparation and startup implementation](CLIENT_STARTUP.md) now generates those source maps from an explicitly enabled selection, resolves dependency order, rejects reserved-module collisions, and skips failed client dependents. Its environment safe-mode path bypasses runtime and payload imports. Local native startup insertion is demonstrated; normal launcher wiring and recoverable pack composition are not yet implemented.
+
 Start with the existing runtime concepts and this small public surface, now exercised by the original greeting-window starter. Verify it natively and publish a matching editor stub before calling the SDK stable. Keep the host Python version separate from the game's embedded Python syntax and libraries.
 
 | Call | Contract |

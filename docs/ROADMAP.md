@@ -1,6 +1,6 @@
 # Foundation roadmap
 
-Status: approved roadmap, 30 October 2026. M1 is in progress: the first implementation provides format-2 packages, sandbox installation state, a CLI and journaled file recovery. [Foundation implementation](FOUNDATION.md) records its exact scope. Real-game adapters and the public alpha gates remain unfulfilled.
+Status: 30 October 2026. The M1 package/synthetic-installation acceptance checks are implemented, and the minimal real-adapter boundary is defined. [Foundation implementation](FOUNDATION.md) records the limits, measurements and recovery evidence. M2/M3 real-game implementation and the public alpha gates remain unfulfilled; this is not gameplay certification.
 
 Build a reliable standalone extension platform before growing the add-on catalog. The first usable Hub release includes client modules, server modules and combined modules. Internal milestones are engineering checkpoints, not separate client-only product releases.
 
@@ -18,8 +18,8 @@ Build a reliable standalone extension platform before growing the add-on catalog
 ## Next practical steps
 
 1. **Make the creator loop usable now.** Implemented for synthetic files: `new`, edit, `build`, then the existing reviewed sandbox installation. [Creator guide](CREATING_ADDONS.md). Client, server and combined starters share one format; no manual checksum maintenance.
-2. **Finish the remaining M1 evidence.** Partial-write/flush failure tests and a 64 MiB lifecycle measurement are implemented; see [foundation evidence](FOUNDATION.md). Next measure high-file-count/multi-package cases and agree only the adapter boundary needed for the first real examples. Preserve recovery and ownership checks as authoring gets easier.
-3. **Prove small real examples.** One client feature and one server quest/configuration feature, followed by a combined example. A creator must not edit game bootstrap code or Docker build scripts for each add-on. Document missing game hooks in the [developer proposal](METIN2SP_INTEGRATION_PROPOSAL.md).
+2. **Keep the M1 checks as regression gates.** Completed: actual 2,048-file/128-package lifecycles, exact byte boundaries, full-size measurements and interrupted-write recovery; see [foundation evidence](FOUNDATION.md). All limits apply together, including disabled packages in the selected-cache budget.
+3. **Implement and prove small real examples.** Follow the [minimal integration decision](MINIMAL_GAME_INTEGRATION.md): one built-in game adapter, a client module and a server quest, followed by a combined example. Implement target claims and read-only build probing first, then staging/compilation and journaled activation. A creator must not edit game bootstrap code or Docker build scripts for each add-on. Document missing game hooks in the [developer proposal](METIN2SP_INTEGRATION_PROPOSAL.md).
 4. **Make installation understandable.** Build a small interface around the same engine: select installation, import package, review, install; then enable/disable/remove and a clear recovery action. Prove one complete journey before expanding screens.
 5. **Let other people try it.** A new creator follows public documentation to build and update an add-on; a new user installs and removes it without a terminal. Record where they need help and simplify those steps before the public alpha and library work.
 

@@ -14,6 +14,8 @@ MAX_JSON = 256 * 1024
 MAX_FILE = 16 * 1024 * 1024
 MAX_TOTAL = 64 * 1024 * 1024
 MAX_FILES = 2048
+MAX_PACKAGES = 128
+MAX_SELECTED_ARCHIVES = 2 * MAX_TOTAL
 ID = re.compile(r"[a-z][a-z0-9_-]*(?:\.[a-z][a-z0-9_-]*)+")
 SHA = re.compile(r"[0-9a-f]{64}")
 

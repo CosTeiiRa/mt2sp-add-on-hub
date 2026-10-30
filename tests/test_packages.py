@@ -208,6 +208,16 @@ class PackageTests(unittest.TestCase):
             with self.assertRaises(HubError):
                 resolve([package()], apis, caps)
 
+    def test_planned_game_components_are_not_accepted_by_synthetic_adapter(self):
+        manifest, files = example()
+        manifest['components']['client']['capabilities'] = ['client.module']
+        manifest['components']['server']['capabilities'] = ['server.quest']
+        candidate = archive(manifest, files)
+        candidate.unpack()  # Existing package syntax; no new format needed.
+        with self.assertRaises(HubError) as caught:
+            resolve([candidate])
+        self.assertEqual(caught.exception.code, 'capability_missing')
+
     def test_corrupt_deflate_is_a_controlled_validation_error(self):
         manifest, files = example()
         output = io.BytesIO()

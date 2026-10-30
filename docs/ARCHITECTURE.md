@@ -2,6 +2,8 @@
 
 Status: proposed design. Interface names and layouts below describe intended contracts; they are not released commands or existing Metin2SP APIs.
 
+The [minimal game integration decision](MINIMAL_GAME_INTEGRATION.md) narrows the first implementation: one local game adapter, one client module entry convention, one quest resource type and fixed local ownership. The broader possibilities below are not all prerequisites for the first real add-on.
+
 Hub owns the extension lifecycle. Metin2SP owns gameplay, the base installation and official updates. Studio and future creator tools consume the same public SDK. Nothing in Hub requires Studio's source, service, database or credentials.
 
 ## Components and dependency direction
@@ -60,7 +62,7 @@ Do not overload the existing client API number to represent server deployment or
 
 Legacy client packages need an explicit supported reader or conversion path. A legacy special-case gameplay package cannot automatically become a generic server module. Changing a publisher source, reusing a withdrawn version or moving a tag requires a visible source-integrity decision; a matching hash is not a publisher identity check.
 
-Dependency resolution produces a concrete lock record containing package IDs, versions and digests. Published artifacts with the same ID/version cannot silently change bytes. A local development build may be replaced only through an explicit new reviewed plan with a new digest.
+Dependency resolution produces a concrete lock record containing package IDs, versions and digests. Published artifacts with the same ID/version cannot silently change bytes. The current foundation requires a new version for changed bytes, including local development builds previously seen by that installation. A fresh disposable sandbox can be used for early experiments.
 
 ## Compatibility and trust
 

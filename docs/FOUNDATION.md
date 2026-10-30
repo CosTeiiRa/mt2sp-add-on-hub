@@ -1,6 +1,6 @@
 # Experimental package and recovery foundation
 
-This is the first M1 increment. It provides an offline package engine and an explicitly initialized synthetic filesystem target. Client/server labels identify separate fixture directories; no game code, quest compilation, Docker deployment or native client runtime is invoked.
+This is the M1 package and synthetic installation foundation. It provides an offline package engine and an explicitly initialized synthetic filesystem target. Client/server labels identify separate fixture directories; no game code, quest compilation, Docker deployment or native client runtime is invoked. The [minimal real-game integration](MINIMAL_GAME_INTEGRATION.md) is defined for the next implementation stage.
 
 ## Implemented scope
 
@@ -121,20 +121,36 @@ Storage tests additionally inject partial/short writes, flush errors, file-sync 
 
 Run `python tools/check_public_tree.py` after staging the intended files. It compares the Git index to [public-files.txt](../config/public-files.txt), checks selected privacy patterns and validates relative document links. Local review can add `--private-term` and `--base` to inspect private terms and outgoing commit metadata. It is a review aid, not a guarantee that every secret or personal identifier is detected.
 
-For a repeatable large-package measurement, run `python tools/measure_foundation.py` with `PYTHONPATH=src`. It creates and removes a disposable 64 MiB combined package with four 16 MiB invented files, then reports build/validation/install/removal timings and peak traced Python allocations. Output excludes local paths and machine identity.
+## Package-limit evidence
 
-One Windows/Python 3.13.7 run on 30 October 2026 observed the following. These are sample measurements, not performance promises or total process-memory measurements. Tracing starts before the build and includes retained allocations from earlier measured stages; temporary fixture generation and interpreter startup are outside the measurement.
+All limits apply together; reaching one does not waive another. For example, long filenames can exhaust the 256 KiB manifest budget before reaching 2,048 files. Installed-but-disabled packages still count toward the package-count and selected-archive budgets. Historical backups, old releases and receipts are retained separately; the 128 MiB selected-archive limit is not a lifetime disk-cache quota.
 
-| Stage | Seconds | Peak traced MiB |
-| --- | ---: | ---: |
-| Build | 0.202 | 192.07 |
-| Validate | 0.062 | 128.06 |
-| Plan installation | 0.510 | 192.09 |
-| Apply installation | 0.379 | 130.08 |
-| Plan removal | 0.128 | 82.08 |
-| Apply removal | 0.186 | 66.08 |
+| Boundary | Evidence |
+| --- | --- |
+| 256 KiB manifest | Exact boundary parses; one extra byte is rejected |
+| 16 MiB file, 64 MiB expanded package, 66 MiB archive | Exact/one-over comparisons with small byte budgets in CI; real full-size payloads in the measurement profiles |
+| 2,048 payload files | Actual single-package archive accepted; one extra file rejected; count also enforced across client/server components |
+| 2,048 active files and 64 MiB active bytes | Count enforced across packages; exact/one-over aggregate-byte tests; real 64 MiB/2,048-file measurements |
+| 128 installed packages | Actual installation with 128 combined packages and 2,048 files; package 129 refused even after disabling all existing packages; offline removal succeeds |
+| Dependency depth at package limit | A 128-package chain resolves in dependency order; package 129 refused |
+| 128 MiB selected archives | Exact/one-over budget checks include disabled packages; rejection leaves installed state unchanged; near-limit real archive selection completes install/disable/remove |
 
-Before calling M1 complete, settle the minimal adapter protocol/installation registry needed for real targets and measure the remaining high-file-count/multi-package cases. The four-file measurement is not a worst-case bound for every allowed selection. The next adapter work must preserve the existing journal/ownership contract while adding real client/server staging and verification. The first usable Hub release still requires both real adapters and combined gameplay acceptance; this development snapshot is not that release.
+Run `python tools/measure_foundation.py --profile all` with `PYTHONPATH=src` to repeat the full-size measurements. Individual profiles are `large` (the default), `files`, `packages` and `cached`. Each creates original disposable data, completes installation/removal and emits one JSON line after cleanup. Output excludes local paths and machine identity. Repeating all profiles can take several minutes because each file is durably written and verified.
+
+One Windows/Python 3.13.7 run on 30 October 2026 observed the following. Timings are sample observations, not promises. Peak values are traced Python allocations, not total process memory or a proof of a universal worst case. Tracing includes retained package objects from earlier measured stages, but excludes fixture generation and interpreter startup.
+
+| Profile | Packages / files | Payload | Build / apply install / apply remove seconds | Largest stage peak MiB | Largest JSON record bytes |
+| --- | --- | --- | --- | ---: | ---: |
+| `large` | 1 / 4 | 64 MiB active | 0.199 / 0.323 / 0.190 | 192.09 | 1,598 |
+| `files` | 1 / 2,048 | 64 MiB active | 17.275 / 67.290 / 31.399 | 197.82 | 498,082 |
+| `packages` | 128 / 2,048 | 64 MiB active | 25.558 / 82.641 / 31.291 | 197.55 | 518,998 |
+| `cached` | 2 / 8 total | One near-64 MiB package active; the other disabled | 0.423 / 0.314 / 0.188 | 274.02 | 1,859 |
+
+The cached profile selects 134,203,878 archive bytes, below the 134,217,728-byte ceiling. Enabling both packages exceeds the active-payload limit and is rejected. Its installation timing refers to the second package; JSON output also records the first install and disable stages. All measured records fit within the independent 8 MiB record limit.
+
+The high-file-count measurements show why installation needs progress and a clear recovery state. Keep the current synchronous writer and conservative limits for now; these results do not justify a parallel writer, background service or a larger limit. Backup/history retention and a disk-space preflight remain part of real deployment work. These tests model software failures and controlled process exits, not hardware power loss.
+
+M1's package/synthetic-installation acceptance checks are now covered. The next work is the [defined real adapter and ownership boundary](MINIMAL_GAME_INTEGRATION.md): implement attachment/probing, stage an original client module and quest, and add deployment recovery evidence. The first usable Hub release still requires both real components and connected gameplay acceptance; this development snapshot is not that release.
 
 ## Implementation references
 

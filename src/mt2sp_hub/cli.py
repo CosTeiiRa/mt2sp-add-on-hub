@@ -5,7 +5,7 @@ from pathlib import Path
 
 from .authoring import create
 from .core.packages import Package, build, pack
-from .core.validation import MAX_TOTAL
+from .core.validation import MAX_PACKAGES, MAX_SELECTED_ARCHIVES
 from .errors import HubError, require
 from .installation.manager import Manager, initialize
 
@@ -80,12 +80,12 @@ def run(args):
     if args.command == "status":
         return manager.status()
     if args.command == "plan":
-        require(len(args.add) <= 128, "package_limit", "Too many package additions.")
+        require(len(args.add) <= MAX_PACKAGES, "package_limit", "Too many package additions.")
         packages, total = [], 0
         for path in args.add:
             package = Package.load(path)
             total += len(package.raw)
-            require(total <= 2 * MAX_TOTAL, "selection_limit", "Package additions exceed their combined size limit.")
+            require(total <= MAX_SELECTED_ARCHIVES, "selection_limit", "Package additions exceed their combined size limit.")
             packages.append(package)
         return manager.plan(packages, args.remove, args.enable, args.disable)
     require(args.yes, "confirmation_required", "Review the operation and pass --yes to confirm.")

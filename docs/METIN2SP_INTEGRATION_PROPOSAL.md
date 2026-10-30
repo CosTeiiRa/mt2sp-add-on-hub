@@ -12,6 +12,17 @@ There is no requirement to wait for every request before building the foundation
 
 ## Request priorities
 
+The [minimal game integration decision](MINIMAL_GAME_INTEGRATION.md) is the concrete first slice behind these requests: one Python module entry, one quest resource type and one coordinated local deployment. It keeps author-facing package fields unchanged. For the first discussion, bring these acceptance questions:
+
+| Request | Smallest useful developer deliverable | Demonstration |
+| --- | --- | --- |
+| U01/U02 | Build/compiler identifiers and supported module directories with documented update behaviour | An official update preserves module source/data and exposes its new build identity |
+| U03 | One client loader entry and documented open/close/window lifecycle | Two small modules register and clean up without each patching startup code |
+| U04 | A quest include/compile path with names and artifact inventory | A new quest compiles independently; duplicate names and compile errors leave the old deployment usable |
+| U05/U06 | Shared update exclusion plus status showing the active deployment revision | Hub cannot overlap an update and can distinguish a running old revision from the newly requested one |
+
+These are discussion targets, not claims that the official game already exposes these APIs. Hub can own the supported-build adapter and generated registration files; the team does not need to implement the package manager or catalog.
+
 For the first conversation, the creator-facing outcome is simple: one documented place for a client module, one documented way to register a server quest/configuration module, and enough build/update information to keep them compatible. U01-U05 describe the small contracts that enable this. Ask the team to demonstrate a minimal module through each path; an add-on author should not need to patch the client bootstrap or a central Dockerfile. Deeper hooks remain feature-driven requests, not prerequisites for every add-on.
 
 | ID | Request | Priority | Hub milestone helped | Can Hub proceed without it? |

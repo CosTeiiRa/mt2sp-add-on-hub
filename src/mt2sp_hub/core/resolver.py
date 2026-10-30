@@ -1,6 +1,6 @@
 """Validate an explicitly selected graph; never download or silently upgrade."""
 from ..errors import require
-from .validation import MAX_FILES, MAX_TOTAL, path_set
+from .validation import MAX_FILES, MAX_PACKAGES, MAX_TOTAL, path_set
 from .versions import satisfies
 
 
@@ -10,6 +10,7 @@ def resolve(packages, apis=None, capabilities=None):
     selected, outputs, owners = {}, {}, {}
     total = 0
     for package in packages:
+        require(len(selected) < MAX_PACKAGES, "package_limit", "Too many selected packages.")
         manifest, files = package.unpack()
         ident = manifest["id"]
         require(ident not in selected, "duplicate_package", "Duplicate selected package ID.")
@@ -25,7 +26,6 @@ def resolve(packages, apis=None, capabilities=None):
             total += len(raw)
             require(total <= MAX_TOTAL and len(outputs) <= MAX_FILES,
                     "selection_limit", "Selected outputs exceed installation limits.")
-    require(len(selected) <= 128, "package_limit", "Too many selected packages.")
     path_set(outputs)
     for ident, manifest in selected.items():
         require(not set(manifest["conflicts"]) & selected.keys(),

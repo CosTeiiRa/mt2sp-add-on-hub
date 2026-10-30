@@ -14,7 +14,7 @@ from pathlib import Path
 from ..errors import require
 from ..core.packages import Package
 from ..core.resolver import resolve
-from ..core.validation import (MAX_FILE, MAX_FILES, MAX_TOTAL, confined, digest,
+from ..core.validation import (MAX_FILE, MAX_FILES, MAX_PACKAGES, MAX_SELECTED_ARCHIVES, MAX_TOTAL, confined, digest,
                                identifier, path_set, read_bounded)
 from .locking import exclusive
 from .storage import Store, atomic_write, unlink
@@ -80,7 +80,7 @@ class Manager:
                 {"schema", "installation", "generation", "installed", "managed"}
                 and state["schema"] == 1 and state["installation"] == self.identity["id"]
                 and type(state["generation"]) is int and state["generation"] >= 0
-                and isinstance(state["installed"], dict) and len(state["installed"]) <= 128
+                and isinstance(state["installed"], dict) and len(state["installed"]) <= MAX_PACKAGES
                 and isinstance(state["managed"], dict) and len(state["managed"]) <= MAX_FILES,
                 "state_schema", "Unsupported or invalid installation state.")
         path_set(state["managed"])
@@ -138,8 +138,8 @@ class Manager:
             before = self._state()
             desired = copy.deepcopy(before["installed"])
             touched = set()
-            require(len(additions) <= 128, "package_limit", "Too many package additions.")
-            require(sum(len(p.raw) for p in additions) <= 2 * MAX_TOTAL,
+            require(len(additions) <= MAX_PACKAGES, "package_limit", "Too many package additions.")
+            require(sum(len(p.raw) for p in additions) <= MAX_SELECTED_ARCHIVES,
                     "selection_limit", "Package additions exceed their combined size limit.")
             for package in additions:
                 manifest, archive = self._import(package)
@@ -159,13 +159,13 @@ class Manager:
                     else:
                         desired[ident]["enabled"] = action == "enable"
             require(bool(touched), "empty_plan", "Select at least one package operation.")
-            require(len(desired) <= 128, "package_limit", "Too many installed packages.")
+            require(len(desired) <= MAX_PACKAGES, "package_limit", "Too many installed packages.")
             packages = []
             total_archives = 0
             for ident, row in sorted(desired.items()):
                 raw = self.store.get(row["archive"])
                 total_archives += len(raw)
-                require(total_archives <= 2 * MAX_TOTAL, "selection_limit", "Selected package cache exceeds its limit.")
+                require(total_archives <= MAX_SELECTED_ARCHIVES, "selection_limit", "Selected package cache exceeds its limit.")
                 package = Package(raw)
                 manifest = package.manifest
                 require(manifest["id"] == ident and manifest["version"] == row["version"],

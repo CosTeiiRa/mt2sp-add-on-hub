@@ -2,6 +2,8 @@
 
 This guide tests packaging and installation with original text files. It does not create a playable Metin2SP feature. Client scripting, server quests and real game installation remain future adapter work. You need Python 3.11 or newer and a checkout of this public repository; Studio and a GitHub account are not required to run these commands.
 
+The [next real-add-on contract](MINIMAL_GAME_INTEGRATION.md) keeps this workflow: one manifest plus a Python module, a quest, or both. It is a design for the next adapter; keep using the sandbox starters until that adapter is implemented and verified.
+
 ## 1. Create and build
 
 Open PowerShell in the Hub checkout. Use fresh paths for this first run:

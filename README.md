@@ -36,6 +36,7 @@ Hub must build and work without Studio or access to any private repository. The 
 - [Curated roadmap](docs/ROADMAP.md): milestones, dependencies, acceptance gates and the first implementation tasks.
 - [Foundation implementation](docs/FOUNDATION.md): current commands, format 2, state protocol, evidence and limitations.
 - [Foundation architecture](docs/ARCHITECTURE.md): ownership, package contracts, installation state and deployment recovery.
+- [Minimal game integration](docs/MINIMAL_GAME_INTEGRATION.md): the first client/quest creator contract and the adapter boundary to implement next.
 - [Extraction and migration](docs/EXTRACTION_AND_MIGRATION.md): reuse existing work without importing private state or breaking installed modules.
 - [Public information and privacy](docs/PUBLICATION_AND_PRIVACY.md): publication rules for source, Git history, diagnostics and release artifacts.
 - [Metin2SP integration proposal](docs/METIN2SP_INTEGRATION_PROPOSAL.md): developer requests, precise outcomes, fallbacks and a future discussion brief.

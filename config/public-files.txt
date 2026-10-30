@@ -10,6 +10,7 @@ docs/CREATING_ADDONS.md
 docs/EXTRACTION_AND_MIGRATION.md
 docs/FOUNDATION.md
 docs/METIN2SP_INTEGRATION_PROPOSAL.md
+docs/MINIMAL_GAME_INTEGRATION.md
 docs/PUBLICATION_AND_PRIVACY.md
 docs/ROADMAP.md
 pyproject.toml
@@ -34,6 +35,7 @@ tests/helpers.py
 tests/storage_faults.py
 tests/test_cli.py
 tests/test_installation.py
+tests/test_limits.py
 tests/test_packages.py
 tests/test_storage.py
 tests/test_storage_recovery.py

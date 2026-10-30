@@ -8,11 +8,15 @@ from .core.packages import Package, build, pack
 from .core.validation import MAX_PACKAGES, MAX_SELECTED_ARCHIVES
 from .errors import HubError, require
 from .installation.manager import Manager, initialize
+from .installation.probe import describe, probe
 
 
 def parser():
     root = argparse.ArgumentParser(prog="mt2sp-hub", description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
+    inspect_game = commands.add_parser("probe", help="Inspect a selected game layout without writing or running Docker")
+    inspect_game.add_argument("root", type=Path)
+    inspect_game.add_argument("--json", action="store_true", help="Return a report without local paths or raw metadata")
     starter = commands.add_parser("new", help="Create an editable sandbox starter (no game code)")
     starter.add_argument("source", type=Path)
     starter.add_argument("--id", required=True, help="Public namespaced ID, for example example.hello")
@@ -45,6 +49,8 @@ def parser():
 
 
 def run(args):
+    if args.command == "probe":
+        return probe(args.root)
     if args.command == "new":
         manifest = create(args.source, args.id, args.kind)
         return {"id": manifest["id"], "version": manifest["version"],
@@ -98,7 +104,9 @@ def main(argv=None):
     args = parser().parse_args(argv)
     try:
         result = run(args)
-        if args.command in ("new", "build") and not args.json:
+        if args.command == "probe" and not args.json:
+            describe(result)
+        elif args.command in ("new", "build") and not args.json:
             verb = "Created" if args.command == "new" else "Built"
             print(f"{verb} {result['id']} {result['version']} ({', '.join(result['components'])}).")
             if args.command == "new":
@@ -119,7 +127,9 @@ def main(argv=None):
             message = "Could not read or write the project. Check folder permissions and free disk space."
             if isinstance(exc, FileNotFoundError):
                 message = "An input file or output parent folder is missing. Check the project and folder names."
-    if args.command in ("new", "build") and not args.json:
+        elif args.command == "probe":
+            message = "Could not inspect the selected folder. Check that it exists and is readable."
+    if args.command in ("new", "build", "probe") and not args.json:
         print(f"Error [{code}]: {message}")
     else:
         print(json.dumps({"error": code, "message": message}))

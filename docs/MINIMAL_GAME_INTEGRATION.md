@@ -2,6 +2,8 @@
 
 Status: implementation decision for the next real-adapter work, 30 October 2026. This document defines the boundary; it does **not** enable installation into a game. The current CLI still accepts only synthetic sandboxes. Capability names and runtime calls below must be implemented and tested before they become a supported SDK.
 
+The initial `probe` command now reads a selected game layout and existing ownership metadata without mutation. [Its scope and statuses](FOUNDATION.md#read-only-game-probe) are narrower than the full adapter probe below: build/runtime identity and real attachment are not implemented yet.
+
 ## What an author supplies
 
 Keep the existing format-2 package and `new` / edit / `build` workflow. A first real add-on supplies its manifest and either a Python module, a quest, or both:
@@ -96,6 +98,8 @@ Initially bind one selected client to one local world. Keep authoritative state 
 Both canonical roots use a fixed `.mt2sp-hub/lock`. The client also holds a private claim naming the installation ID and coordinator binding. Attaching acquires both locks in canonical path order (one lock when roots coincide), checks existing claims and uses exclusive claim creation. A second world cannot claim the same client. The server probe must also verify the expected local Docker project and persistent-world identity; an ambiguous/shared deployment is rejected.
 
 The future attach operation is recoverable: persist a pending attachment record before creating claims, then mark it ready only after both roots and the server identity verify. A crash leaves an explicit pending attachment; retry must inspect it rather than create another owner. Release or repair only claims proven to belong to that operation. Moved/copied roots remain refused until an explicit relocation/clone flow is implemented. Local paths and Docker details stay private.
+
+The experimental ownership reader recognizes checksummed envelopes using the existing `sha256`/`data` record convention. World `identity.json` data has exact fields `schema: 1`, `kind: "metin2sp"`, a 32-character lowercase hexadecimal `id`, canonical normalized `world_root` and `client_root`, and `attachment: "pending"` or `"ready"`. Client `claim.json` has `schema: 1`, `kind: "metin2sp-client"`, the matching `installation` ID and the same two root bindings. Records are limited to 64 KiB. These are private internal records, not creator manifests. Do not hand-create them to enable installation: the current reader never grants write access, and no real attachment writer exists yet.
 
 Studio and cooperating tools must use the same coordinator and locks. An official updater that ignores those locks remains a known race; require it idle and recheck inputs. Do not claim that Hub's lock controls unrelated tools.
 

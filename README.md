@@ -20,6 +20,17 @@ Follow [Create your first sandbox add-on](docs/CREATING_ADDONS.md) to edit, inst
 
 For engineering details and tests, see the [foundation contracts](docs/FOUNDATION.md). MIT license and source attribution are in [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 
+## Inspect a game folder
+
+The first game-integration command is read-only:
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m mt2sp_hub probe "path/to/Metin2 Singleplayer"
+```
+
+It accepts the game folder, `Klient`, `Serwer` or the client's `pack` folder. It checks expected files and existing Hub ownership records without running Docker or creating state. Add `--json` for a report that omits local paths. A detected layout is **not** a supported-build check; real installation remains disabled. See [probe scope and ownership states](docs/FOUNDATION.md#read-only-game-probe).
+
 ## Project boundaries
 
 | Project | Responsibility |

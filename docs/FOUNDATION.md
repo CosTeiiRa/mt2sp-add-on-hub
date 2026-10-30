@@ -73,6 +73,31 @@ Limits: 256 KiB manifest, 16 MiB per payload file, 64 MiB payload per package, 6
 
 Settings schemas, semantic quest/content-ID ownership, persistent-data migrations, source subscriptions and format-1 conversion are later increments. Filesystem checks and hashes are not a sandbox or publisher-authenticity mechanism.
 
+## Read-only game probe
+
+`python -m mt2sp_hub probe "path/to/Metin2 Singleplayer"` inspects a user-selected local layout. Selection also accepts `Klient`, `Serwer`, the client's `pack` directory or an outer folder containing `Metin2 Singleplayer`. It does not scan the home directory or guess an installation from private Studio settings. Ambiguous layouts require a more specific selection.
+
+The probe checks the executable and root-pack files, the server version/data markers, the game Dockerfile and the presence of exactly one recognized Compose filename. It does not parse or execute these game files. Only bounded version labels and existing Hub identity/claim metadata are read. The probe does not read `.env`, database dumps, player data or container environment variables, and invokes no external command.
+
+The default output is short text. `--json` returns the same inspection as structured data with `can_install: false`. Exit code zero means inspection completed, not that installation is allowed. Missing files are reported by fixed relative role names; local absolute paths, installation IDs, arbitrary version-file contents and raw exception details are omitted. Only simple numeric version labels are displayed, and labels are never compatibility proof.
+
+Ownership is an unlocked, read-only snapshot of the selected roots:
+
+| Status | Meaning |
+| --- | --- |
+| `no_hub_records` | Neither selected root has Hub control state; this is not a reservation or proof that another manager is idle |
+| `matching_claims` | Checksummed identity/claim records match the selected roots and installation ID; this still grants no write access |
+| `recovery_required` | Matching metadata indicates pending attachment or an active operation |
+| `conflict` | Targets/installation IDs differ, a copied binding is stale, or the roots hold incompatible ownership roles |
+| `incomplete` | An identity or corresponding claim is missing |
+| `unrecognized` | A control directory exists without recognized identity/claim records |
+| `synthetic` | Existing synthetic state cannot authorize a real-game operation |
+| `invalid` | Unsafe paths, unreadable/oversized metadata, unsupported schema or invalid checksums |
+
+The command creates neither control directories nor lock files and never follows a coordinator path obtained from metadata. It reads only the two selected roots. Link/reparse checks apply to files under those roots. Preserve conflicting or unfinished state; there is no force/repair/attach option in this increment.
+
+Build fingerprints, client/process status, active Docker world identity, compiler compatibility, updater exclusion and other managers remain explicitly unverified. The next attach implementation must revalidate under both target locks and persist a recoverable attachment before any real deployment is possible. The synthetic installation commands continue to refuse real ownership records.
+
 ## Installation state and locking
 
 `sandbox-init` accepts only an empty directory and creates `.mt2sp-hub`. A random installation ID is independent of the local path. A separate canonical-root binding detects copied/relocated sandbox state and refuses it; explicit relocation/clone support remains future work.

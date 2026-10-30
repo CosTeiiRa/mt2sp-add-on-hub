@@ -1,10 +1,22 @@
 # MT2SP Add-on Hub
 
-A planned standalone platform for managing client, server and combined add-ons for Metin2 Singleplayer.
+A standalone platform under development for managing client, server and combined add-ons for Metin2 Singleplayer.
 
-**Status: foundation planning.** This repository currently contains the design and delivery plan. It does not yet provide an installable Hub, a supported game integration or a released SDK.
+**Status: experimental foundation.** The offline Python core validates component packages and manages reviewed file transactions in explicitly initialized synthetic sandboxes. It includes installation state, dependency/ownership checks, process locking and interruption recovery. Real game adapters, the management UI and a stable SDK remain future milestones.
 
 The first usable release must support all three module types. It will target Windows with a local Metin2SP Docker installation. The game remains responsible for gameplay, its launcher and official updates. Installed modules should work with Hub closed.
+
+## Try the foundation
+
+Use Python 3.11 or newer. The core and tests need no third-party runtime packages.
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m unittest discover -s tests -v
+python -m mt2sp_hub --help
+```
+
+Follow the [sandbox walkthrough and implemented contracts](docs/FOUNDATION.md) to build an original example, inspect a plan and apply or recover it. The current adapter accepts only its own synthetic sandbox marker; it has no game installation path. MIT license and source attribution are in [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 
 ## Project boundaries
 
@@ -20,9 +32,10 @@ Hub must build and work without Studio or access to any private repository. The 
 ## Planning documents
 
 - [Curated roadmap](docs/ROADMAP.md): milestones, dependencies, acceptance gates and the first implementation tasks.
+- [Foundation implementation](docs/FOUNDATION.md): current commands, format 2, state protocol, evidence and limitations.
 - [Foundation architecture](docs/ARCHITECTURE.md): ownership, package contracts, installation state and deployment recovery.
 - [Extraction and migration](docs/EXTRACTION_AND_MIGRATION.md): reuse existing work without importing private state or breaking installed modules.
 - [Public information and privacy](docs/PUBLICATION_AND_PRIVACY.md): publication rules for source, Git history, diagnostics and release artifacts.
 - [Metin2SP integration proposal](docs/METIN2SP_INTEGRATION_PROPOSAL.md): developer requests, precise outcomes, fallbacks and a future discussion brief.
 
-Implementation starts with the package contract and installation coordinator. Catalog polish and a large add-on collection follow a working foundation. No official Metin2SP partnership or API commitment is implied.
+Catalog polish and a large add-on collection follow a working foundation. No official Metin2SP partnership or API commitment is implied. Report reproducible defects with invented data through the repository's issues; keep raw installation state and private information out of reports.

@@ -13,6 +13,7 @@ docs/GAME_CREATORS.md
 docs/METIN2SP_INTEGRATION_PROPOSAL.md
 docs/MINIMAL_GAME_INTEGRATION.md
 docs/PUBLICATION_AND_PRIVACY.md
+docs/QUEST_STAGING.md
 docs/ROADMAP.md
 pyproject.toml
 sdk/schemas/addon-v2.schema.json
@@ -32,6 +33,7 @@ src/mt2sp_hub/installation/__init__.py
 src/mt2sp_hub/installation/locking.py
 src/mt2sp_hub/installation/manager.py
 src/mt2sp_hub/installation/probe.py
+src/mt2sp_hub/installation/quests.py
 src/mt2sp_hub/installation/runtime_probe.py
 src/mt2sp_hub/installation/storage.py
 tests/crash_worker.py
@@ -44,6 +46,7 @@ tests/test_installation.py
 tests/test_limits.py
 tests/test_packages.py
 tests/test_probe.py
+tests/test_quests.py
 tests/test_runtime_probe.py
 tests/test_storage.py
 tests/test_storage_recovery.py

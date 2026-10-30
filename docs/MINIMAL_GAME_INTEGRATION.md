@@ -42,7 +42,7 @@ The entry path is a convention, so this first slice needs no new manifest field 
 
 ## Small client runtime
 
-The standalone lifecycle runtime is now implemented and tested using invented widgets under host Python. Native game bootstrap, embedded-interpreter/UI verification and a supported game profile remain outstanding. The behavior below is the experimental runtime contract, not a stable SDK compatibility promise.
+The standalone lifecycle runtime is implemented and tested using invented widgets under host Python. It also passed a local native UI/session harness in an owned client copy under embedded Python 2.7.6. Normal game-phase/bootstrap integration, connected gameplay and a supported game profile remain outstanding. The behavior below is the experimental runtime contract, not a stable SDK compatibility promise.
 
 Use one host-owned bootstrap. At client startup it reads the verified enabled-package list and loads each module's `main.py` in its own namespace. Imports between a module's helper files go through `context.module(name)`; an author need not construct private loader paths. Loading one add-on must not replace another add-on's module in the interpreter cache.
 
@@ -62,6 +62,8 @@ The runtime owns registrations. It disposes a session's windows when gameplay cl
 For the first release, close the client before installing, updating, disabling or removing modules. Enablement takes effect at the next launch. Hot reload, global key interception and broad reference-data exports are not prerequisites for the first window. A creator should not patch the game's classes or startup script independently.
 
 ## Small server integration
+
+The [quest-staging helpers](QUEST_STAGING.md) implement source identity/collision checks and read-only compiler artifact validation. Local original quests passed those checks using actual compiler output. The exact compiler profile, authoritative official inventories, compilation orchestration and deployment remain unimplemented.
 
 Accept one named quest per `.quest` file under the package namespace. The declared quest name must match the filename. The starter will generate a readable prefixed name such as `example_hello_greeting`; the adapter checks the actual name against both official quests and every selected add-on. Package dependencies do not permit duplicate quest names. Prefix conversion alone is not a uniqueness guarantee.
 

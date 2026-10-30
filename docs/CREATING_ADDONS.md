@@ -1,8 +1,8 @@
 # Create your first sandbox add-on
 
-This guide tests packaging and installation with original text files. It does not create a playable Metin2SP feature. Client scripting, server quests and real game installation remain future adapter work. You need Python 3.11 or newer and a checkout of this public repository; Studio and a GitHub account are not required to run these commands.
+This guide tests packaging and installation with original text files. It does not create a playable Metin2SP feature. Real game installation remains future adapter work. You need Python 3.11 or newer and a checkout of this public repository; Studio and a GitHub account are not required to run these commands.
 
-The [next real-add-on contract](MINIMAL_GAME_INTEGRATION.md) keeps this workflow: one manifest plus a Python module, a quest, or both. It is a design for the next adapter; keep using the sandbox starters until that adapter is implemented and verified.
+The [experimental game-source guide](GAME_CREATORS.md) uses the same workflow for a Python module, a quest, or both. Use those sources to develop the integration; keep using the sandbox starters below for installation testing until the real adapter is verified.
 
 ## 1. Create and build
 

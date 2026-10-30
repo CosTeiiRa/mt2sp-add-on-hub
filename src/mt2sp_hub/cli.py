@@ -18,10 +18,12 @@ def parser():
     inspect_game.add_argument("root", type=Path)
     inspect_game.add_argument("--json", action="store_true", help="Return a report without local paths or raw metadata")
     inspect_game.add_argument("--runtime", action="store_true", help="Also read local Docker status; never starts or changes containers")
-    starter = commands.add_parser("new", help="Create an editable sandbox starter (no game code)")
+    starter = commands.add_parser("new", help="Create a sandbox or experimental game source starter")
     starter.add_argument("source", type=Path)
     starter.add_argument("--id", required=True, help="Public namespaced ID, for example example.hello")
     starter.add_argument("--kind", choices=("client", "server", "combined"), default="combined")
+    starter.add_argument("--profile", choices=("sandbox", "game"), default="sandbox",
+                         help="Game creates experimental Python/quest sources; real installation is not enabled")
     starter.add_argument("--json", action="store_true", help="Return structured output")
     for name, description in (("build", "Build an author's source and compute payload checksums"),
                               ("pack", "Pack source while verifying its existing checksums")):
@@ -53,9 +55,10 @@ def run(args):
     if args.command == "probe":
         return probe(args.root, runtime=args.runtime)
     if args.command == "new":
-        manifest = create(args.source, args.id, args.kind)
+        manifest = create(args.source, args.id, args.kind, profile=args.profile)
         return {"id": manifest["id"], "version": manifest["version"],
-                "components": sorted(manifest["components"]), "kind": "synthetic"}
+                "components": sorted(manifest["components"]),
+                "kind": "synthetic" if args.profile == "sandbox" else "game_preview"}
     if args.command in ("pack", "build"):
         # Keep artifacts outside the source; otherwise the next build would
         # correctly refuse the archive as an undeclared input file.
@@ -112,9 +115,12 @@ def main(argv=None):
             print(f"{verb} {result['id']} {result['version']} ({', '.join(result['components'])}).")
             if args.command == "new":
                 print("Edit addon.json and the files under payload/, then run build.")
-                print("This starter contains sandbox text files, not a working game add-on.")
+                if args.profile == "sandbox":
+                    print("This starter contains sandbox text files, not a working game add-on.")
+                else:
+                    print("Experimental game source created. Real installation and native compatibility remain unverified.")
             else:
-                print("Checksums generated. Source files unchanged. Ready for sandbox testing.")
+                print("Checksums generated. Source files unchanged. Installation requires matching target capabilities.")
         else:
             print(json.dumps(result, indent=2, sort_keys=True))
         return 0

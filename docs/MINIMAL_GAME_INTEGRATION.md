@@ -24,7 +24,7 @@ package/
 
 No author-supplied installer, Dockerfile patch, shell command, SQL migration or executable repair belongs in this first contract. Typed configuration, content tables and extra UI/resource APIs follow a concrete add-on that needs them. Existing engine-specific repairs remain separate compatibility work.
 
-The component declaration uses existing fields. For example, the **proposed real-client profile** would declare:
+The component declaration uses existing fields. The experimental `new --profile game` starter now generates this **real-client capability requirement**, without granting installation support:
 
 ```json
 {
@@ -38,13 +38,15 @@ The component declaration uses existing fields. For example, the **proposed real
 
 The server counterpart requires `server.quest`, with a source such as `server/example_hello_greeting.quest` and target `example.hello/quests/example_hello_greeting.quest`. These are logical component-relative destinations. The adapter maps them into approved game resources; authors never specify physical game paths. Every real-component target must start with its package ID. The builder continues generating archive hashes. The synthetic adapter rejects these real-game capabilities.
 
-The entry path is a convention, so this first slice needs no new manifest field or package format. Adapter/API selection belongs to Hub's reviewed build profile, not a package-selected plug-in or script. Capability `fixture.files` remains exclusively for the synthetic adapter. The game profile must reject fixture-only components rather than interpreting them as real resources.
+The entry path is a convention, so this first slice needs no new manifest field or package format. [Game-source starters](GAME_CREATORS.md) implement this creator contract. Adapter/API selection belongs to Hub's reviewed build profile, not a package-selected plug-in or script. Capability `fixture.files` remains exclusively for the synthetic adapter. The game profile must reject fixture-only components rather than interpreting them as real resources.
 
 ## Small client runtime
 
+The standalone lifecycle runtime is now implemented and tested using invented widgets under host Python. Native game bootstrap, embedded-interpreter/UI verification and a supported game profile remain outstanding. The behavior below is the experimental runtime contract, not a stable SDK compatibility promise.
+
 Use one host-owned bootstrap. At client startup it reads the verified enabled-package list and loads each module's `main.py` in its own namespace. Imports between a module's helper files go through `context.module(name)`; an author need not construct private loader paths. Loading one add-on must not replace another add-on's module in the interpreter cache.
 
-Start with the existing runtime concepts and this small proposed public surface. Validate these signatures in the first original example and publish a matching stub before calling the SDK stable. Keep the host Python version separate from the game's embedded Python syntax and libraries.
+Start with the existing runtime concepts and this small public surface, now exercised by the original greeting-window starter. Verify it natively and publish a matching editor stub before calling the SDK stable. Keep the host Python version separate from the game's embedded Python syntax and libraries.
 
 | Call | Contract |
 | --- | --- |

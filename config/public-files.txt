@@ -9,6 +9,7 @@ docs/ARCHITECTURE.md
 docs/CREATING_ADDONS.md
 docs/EXTRACTION_AND_MIGRATION.md
 docs/FOUNDATION.md
+docs/GAME_CREATORS.md
 docs/METIN2SP_INTEGRATION_PROPOSAL.md
 docs/MINIMAL_GAME_INTEGRATION.md
 docs/PUBLICATION_AND_PRIVACY.md
@@ -20,6 +21,7 @@ src/mt2sp_hub/__init__.py
 src/mt2sp_hub/__main__.py
 src/mt2sp_hub/authoring.py
 src/mt2sp_hub/cli.py
+src/mt2sp_hub/client_runtime.py
 src/mt2sp_hub/core/__init__.py
 src/mt2sp_hub/core/packages.py
 src/mt2sp_hub/core/resolver.py
@@ -36,6 +38,8 @@ tests/crash_worker.py
 tests/helpers.py
 tests/storage_faults.py
 tests/test_cli.py
+tests/test_client_runtime.py
+tests/test_game_creators.py
 tests/test_installation.py
 tests/test_limits.py
 tests/test_packages.py

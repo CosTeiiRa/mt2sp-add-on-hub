@@ -20,6 +20,8 @@ Follow [Create your first sandbox add-on](docs/CREATING_ADDONS.md) to edit, inst
 
 For engineering details and tests, see the [foundation contracts](docs/FOUNDATION.md). MIT license and source attribution are in [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 
+For integration development, [`new --profile game`](docs/GAME_CREATORS.md) creates an original client window, a server greeting quest, or both. It uses the same manifest and builder. The standalone client lifecycle runtime is tested with invented widgets; real installation and native client compatibility remain unverified.
+
 ## Inspect a game folder
 
 The first game-integration command is read-only:

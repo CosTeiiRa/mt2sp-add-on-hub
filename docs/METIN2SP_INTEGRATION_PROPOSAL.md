@@ -64,7 +64,9 @@ For the first conversation, the creator-facing outcome is simple: one documented
 
 **Request:** load approved local module entry points through a single official client bootstrap with a small documented callback surface.
 
-**Contract:** start with game open/close, map change, atlas open/close, window registration and shortcut registration. Document callback arguments, call order, UI-thread ownership, cleanup, interpreter version and re-entrancy. Native input/chat/IME bindings take priority. Provide namespaced imports and an external safe-launch switch that skips third-party code before import.
+**Contract:** start with game open/close, window lifecycle and an external safe-launch switch that skips third-party code before import. Document callback arguments, call order, UI-thread ownership, cleanup, interpreter version and re-entrancy. Add map/atlas events and shortcuts when a concrete module needs them; native input/chat/IME bindings take priority. Hub can own namespaced module loading and window registrations.
+
+**Current demonstration:** the [original greeting window and standalone runtime](GAME_CREATORS.md#client-one-registration-function) pass synthetic coexistence, failure and session-cleanup tests. The smallest missing official hook is one startup entry plus a UI-thread notification after gameplay setup and before teardown. Hub should not need to patch those game methods per build, and authors should not patch them per module. Native interpreter/UI validation is still outstanding.
 
 **Acceptance:** two original modules coexist without replacing each other's shared hooks. Logout/map transitions dispose resources correctly. A callback exception is identified in diagnostics and its callback/window can be disabled. Safe launch works even if a module crashes during import. Blocking or native-code faults remain outside an exception-only isolation guarantee.
 
@@ -79,6 +81,8 @@ For the first conversation, the creator-facing outcome is simple: one documented
 **Acceptance:** a new quest/configuration module installs through a documented path, survives restart/update, preserves quest state and can be disabled/removed. Duplicate IDs/quest names fail before activation. Compilation failure retains the previous usable server build. Invalid modules have a documented boot behaviour.
 
 **Fallback:** a finite adapter for existing supported quest/configuration mechanisms. Resources without a verified composition/deployment path are unavailable. This request is the main enabler for broad server modules; it does not require native dynamic libraries in the first release.
+
+**Current demonstration:** two [original greeting quests](GAME_CREATORS.md#server-one-quest-per-source-file) compiled together using an installed compiler in isolated temporary storage, and malformed source was rejected. The missing contract is a versioned compiler/input recipe with an authoritative artifact/quest inventory and one supported include path. That enables collision checks and staging without each author modifying the game's build. Compilation alone does not demonstrate loading, removal or update compatibility.
 
 ## U05 Updater cooperation
 

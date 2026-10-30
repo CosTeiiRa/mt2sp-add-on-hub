@@ -97,7 +97,7 @@ The first managed overwrite captures an existing synthetic file as its baseline.
 
 ## Commit and recovery protocol
 
-Apply verifies the plan checksum, identity, state generation, backup objects and current file fingerprints while holding the target lock. It persists the full before/after journal before the first target write. Each file replacement is staged beside its destination, flushed and replaced; successful writes are verified. Only after all outputs match does the engine atomically replace `state.json`, then write a receipt and clear the active journal.
+Apply verifies the plan checksum, identity, state generation, backup objects and current file fingerprints while holding the target lock. It persists the full before/after journal before the first target write. Each file replacement is staged beside its destination, checked for a complete write, flushed and replaced; successful writes are verified. Only after all outputs match does the engine atomically replace `state.json`, then write a receipt and clear the active journal.
 
 | Interrupted state | Recovery action |
 | --- | --- |
@@ -107,15 +107,34 @@ Apply verifies the plan checksum, identity, state generation, backup objects and
 
 Recovery itself is restartable. A crash after a restoration step leaves a mixture of valid before/after bytes that the next recovery can recognize. Every new mutation/plan is blocked while a journal remains active. Reusing a completed/recovered plan is rejected so its receipt is not overwritten.
 
+Short writes and failures during temporary-file writing, flush or file synchronization abort before replacement, preserving the previous destination. Cleanup removes only a temporary file created by that attempt; a failed exclusive creation cannot delete a pre-existing file. A directory synchronization error after replacement may leave the new complete bytes visible. Recovery uses the persisted state generation and file hashes to decide the outcome rather than assuming every reported error means nothing changed.
+
+Abrupt process exit can leave `.hub-*.tmp` files beside records or targets. They are never treated as committed state or promoted during recovery. Recovery does not sweep files just because their names match that pattern. They may consume disk space until inspected locally; preserve them with other evidence when investigating an interruption. Automatic cleanup and recovery from hardware power loss are not claimed.
+
 The tests exercise process interruption, not a power-loss/storage-fault certification. File data is flushed, and POSIX directory entries are synchronized. Windows hardware/storage durability and races with non-cooperating writers need further platform validation. The code checks for drift at boundaries but cannot exclude another tool that ignores its lock. The official updater cooperation request remains relevant.
 
 ## Validation and next increment
 
 Run `python -m unittest discover -s tests -v` with `PYTHONPATH=src`. Tests generate their own temporary data, including archive attacks, dependency conflicts, offline lifecycle operations, baseline restoration, state/backup corruption, competing processes and abrupt `os._exit` at journal/file/state/receipt boundaries. Symlink tests skip only when the host refuses link creation; a real Windows junction test and Linux CI cover the respective link paths.
 
+Storage tests additionally inject partial/short writes, flush errors, file-sync errors and directory-sync errors at journal, client, server, state and receipt writes. Subprocesses exit midway through a temporary write, after file synchronization and immediately after replacement at those same destinations. Separate cases cover interrupted rollback, failed cache import, removal and journal cleanup. After reopening, each case must preserve complete before/after bytes and reach the correct installed or rolled-back state. These faults live in test helpers; production does not need an additional recovery framework.
+
 Run `python tools/check_public_tree.py` after staging the intended files. It compares the Git index to [public-files.txt](../config/public-files.txt), checks selected privacy patterns and validates relative document links. Local review can add `--private-term` and `--base` to inspect private terms and outgoing commit metadata. It is a review aid, not a guarantee that every secret or personal identifier is detected.
 
-Before calling M1 complete, broaden interruption tests to failures during flush and partial temporary writes, measure bounded resource use on large valid packages, and settle the adapter protocol/installation registry for real targets. The next adapter work must preserve this journal/ownership contract while adding real client/server staging and verification. The first usable Hub release still requires both real adapters and combined gameplay acceptance; this development snapshot is not that release.
+For a repeatable large-package measurement, run `python tools/measure_foundation.py` with `PYTHONPATH=src`. It creates and removes a disposable 64 MiB combined package with four 16 MiB invented files, then reports build/validation/install/removal timings and peak traced Python allocations. Output excludes local paths and machine identity.
+
+One Windows/Python 3.13.7 run on 30 October 2026 observed the following. These are sample measurements, not performance promises or total process-memory measurements. Tracing starts before the build and includes retained allocations from earlier measured stages; temporary fixture generation and interpreter startup are outside the measurement.
+
+| Stage | Seconds | Peak traced MiB |
+| --- | ---: | ---: |
+| Build | 0.202 | 192.07 |
+| Validate | 0.062 | 128.06 |
+| Plan installation | 0.510 | 192.09 |
+| Apply installation | 0.379 | 130.08 |
+| Plan removal | 0.128 | 82.08 |
+| Apply removal | 0.186 | 66.08 |
+
+Before calling M1 complete, settle the minimal adapter protocol/installation registry needed for real targets and measure the remaining high-file-count/multi-package cases. The four-file measurement is not a worst-case bound for every allowed selection. The next adapter work must preserve the existing journal/ownership contract while adding real client/server staging and verification. The first usable Hub release still requires both real adapters and combined gameplay acceptance; this development snapshot is not that release.
 
 ## Implementation references
 

@@ -1,6 +1,7 @@
 """Content-addressed objects and replace-based, flushed local records."""
 from __future__ import annotations
 
+import errno
 import os
 import uuid
 from pathlib import Path
@@ -23,15 +24,19 @@ def sync_directory(directory):
 def atomic_write(path: Path, raw: bytes):
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(".hub-" + uuid.uuid4().hex + ".tmp")
+    created = False
     try:
         with temporary.open("xb") as stream:
-            stream.write(raw)
+            created = True
+            if stream.write(raw) != len(raw):
+                raise OSError(errno.EIO, "Incomplete temporary-file write")
             stream.flush()
             os.fsync(stream.fileno())
         os.replace(temporary, path)
         sync_directory(path.parent)
     finally:
-        temporary.unlink(missing_ok=True)
+        if created:
+            temporary.unlink(missing_ok=True)
 
 
 def unlink(path):

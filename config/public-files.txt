@@ -31,7 +31,11 @@ src/mt2sp_hub/installation/manager.py
 src/mt2sp_hub/installation/storage.py
 tests/crash_worker.py
 tests/helpers.py
+tests/storage_faults.py
 tests/test_cli.py
 tests/test_installation.py
 tests/test_packages.py
+tests/test_storage.py
+tests/test_storage_recovery.py
 tools/check_public_tree.py
+tools/measure_foundation.py

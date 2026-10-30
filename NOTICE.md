@@ -8,4 +8,6 @@ The installation coordinator, sandbox transaction engine, CLI and synthetic test
 
 Future extractions must add their applicable notices here before publication.
 
+The official build reference contains reviewed public upstream artifact metadata and derived file/inventory digests only. It does not redistribute game code, configuration values, keys or assets, and does not imply official partnership or gameplay certification. The baseline checker and client file-step helper are original platform code and use only the Python standard library.
+
 The standalone client lifecycle runtime adapts the loading, callback and window-lifecycle concepts of the original MIT-licensed Metin2 Studio extension host. Its **Copyright (c) 2026 Metin2 Studio contributors** notice is retained in [LICENSE](LICENSE). This smaller implementation removes application imports, atlas services, preferences, physical source lookup and game-class patching. The generated greeting window and quest are original Hub examples; they contain no game distribution source or assets.

@@ -133,7 +133,7 @@ def ownership(binding):
         return 'invalid'
 
 
-def probe(selected, *, runtime=False):
+def probe(selected, *, runtime=False, build=False):
     binding = locate(selected)
     client_files = {name: _file_status(binding.client, name) for name in CLIENT_FILES}
     world_files = {name: _file_status(binding.world, name) for name in WORLD_FILES}
@@ -157,6 +157,9 @@ def probe(selected, *, runtime=False):
         'next_step': 'Real installation requires a verified game adapter and recoverable ownership attachment.'}
     if runtime:
         report['runtime'] = inspect_runtime(binding, present[0] if compose_status == 'single' else None)
+    if build:
+        from .baseline import check_build
+        report['build'] = check_build(binding, report['client']['version_label'], report['server']['version_label'])
     return report
 
 
@@ -180,5 +183,13 @@ def describe(report):
     print(labels[report['ownership']['status']])
     if 'docker' in report['runtime']:
         describe_runtime(report['runtime'])
+    if 'build' in report:
+        checks = report['build']
+        print('Official build reference: ' + checks['status'].replace('_', ' ') + '.')
+        for side in ('client', 'server'):
+            for name, status in checks[side].items():
+                if status != 'match':
+                    print('  ' + side + '/' + name + ': ' + status)
+        print('Reference checks are a read-only snapshot, not permission to install.')
     print('Game installation is disabled. Build compatibility, active add-on revision and other managers remain unverified.')
     print('Read-only inspection finished; no state was created or changed.')

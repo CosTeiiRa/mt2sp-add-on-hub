@@ -18,6 +18,7 @@ def parser():
     inspect_game.add_argument("root", type=Path)
     inspect_game.add_argument("--json", action="store_true", help="Return a report without local paths or raw metadata")
     inspect_game.add_argument("--runtime", action="store_true", help="Also read local Docker status; never starts or changes containers")
+    inspect_game.add_argument("--build", action="store_true", help="Compare build inputs with the reviewed official reference, offline")
     starter = commands.add_parser("new", help="Create a sandbox or experimental game source starter")
     starter.add_argument("source", type=Path)
     starter.add_argument("--id", required=True, help="Public namespaced ID, for example example.hello")
@@ -53,7 +54,7 @@ def parser():
 
 def run(args):
     if args.command == "probe":
-        return probe(args.root, runtime=args.runtime)
+        return probe(args.root, runtime=args.runtime, build=args.build)
     if args.command == "new":
         manifest = create(args.source, args.id, args.kind, profile=args.profile)
         return {"id": manifest["id"], "version": manifest["version"],

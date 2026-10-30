@@ -191,6 +191,14 @@ The high-file-count measurements show why installation needs progress and a clea
 
 M1's package/synthetic-installation acceptance checks are now covered. The next work is the [defined real adapter and ownership boundary](MINIMAL_GAME_INTEGRATION.md): implement attachment/probing, stage an original client module and quest, and add deployment recovery evidence. The first usable Hub release still requires both real components and connected gameplay acceptance; this development snapshot is not that release.
 
+## Official baseline and real client file steps
+
+The optional [`probe --build`](GAME_BASELINE.md) now verifies scoped official client/server inputs without registering local files as trusted or enabling activation. A reproducible review combines a pinned full distribution with checksum-verified release updates; this supplies the stock server inputs omitted by update ZIPs. One exact reference pair is reviewed, client 2.0.135 / server 2.2.134. Unknown versions, extra/changed server build files, unsafe paths and inputs changing during inspection fail the reference check.
+
+The internal [client pack file steps](CLIENT_FILES.md) use the existing object store and atomic replacement routine for two fixed targets. Both revisions are cached before mutation; restoration preflights the whole pair and preserves external edits or corrupt backup evidence. The parent game coordinator still owns locks, authorization, journaling and state commit.
+
+A private official-input rehearsal verified 23 client inputs and a 14,493-file server build tree. It composed two original window packages into the 1,359-member root pack with four generated host members (18,724,464-byte replacement pair), verified the complete logical contents, and restored the original bytes after worker process termination during replacement and during restoration. The source installation was unchanged. No server was deployed and connected gameplay was not tested by this rehearsal. Raw evidence and game material remain local.
+
 ## Implementation references
 
 The locking, atomic replacement and archive checks use the Python standard library contracts: [Windows byte-range locks](https://docs.python.org/3/library/msvcrt.html#msvcrt.locking), [file replacement](https://docs.python.org/3/library/os.html#os.replace), and [ZIP extraction pitfalls](https://docs.python.org/3/library/zipfile.html#decompression-pitfalls).

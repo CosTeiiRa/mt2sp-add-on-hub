@@ -6,11 +6,13 @@ NOTICE.md
 README.md
 config/public-files.txt
 docs/ARCHITECTURE.md
+docs/CLIENT_FILES.md
 docs/CLIENT_HOOKS.md
 docs/CLIENT_STARTUP.md
 docs/CREATING_ADDONS.md
 docs/EXTRACTION_AND_MIGRATION.md
 docs/FOUNDATION.md
+docs/GAME_BASELINE.md
 docs/GAME_CREATORS.md
 docs/METIN2SP_INTEGRATION_PROPOSAL.md
 docs/MINIMAL_GAME_INTEGRATION.md
@@ -19,8 +21,8 @@ docs/QUEST_COMPILATION.md
 docs/QUEST_STAGING.md
 docs/ROADMAP.md
 pyproject.toml
-sdk/schemas/addon-v2.schema.json
 sdk/schemas/addon-source-v2.schema.json
+sdk/schemas/addon-v2.schema.json
 src/mt2sp_hub/__init__.py
 src/mt2sp_hub/__main__.py
 src/mt2sp_hub/authoring.py
@@ -35,10 +37,13 @@ src/mt2sp_hub/core/validation.py
 src/mt2sp_hub/core/versions.py
 src/mt2sp_hub/errors.py
 src/mt2sp_hub/installation/__init__.py
+src/mt2sp_hub/installation/baseline.py
 src/mt2sp_hub/installation/client.py
+src/mt2sp_hub/installation/client_files.py
 src/mt2sp_hub/installation/compiler.py
 src/mt2sp_hub/installation/locking.py
 src/mt2sp_hub/installation/manager.py
+src/mt2sp_hub/installation/official_build.py
 src/mt2sp_hub/installation/probe.py
 src/mt2sp_hub/installation/quests.py
 src/mt2sp_hub/installation/runtime_probe.py
@@ -46,7 +51,9 @@ src/mt2sp_hub/installation/storage.py
 tests/crash_worker.py
 tests/helpers.py
 tests/storage_faults.py
+tests/test_baseline.py
 tests/test_cli.py
+tests/test_client_files.py
 tests/test_client_hooks.py
 tests/test_client_runtime.py
 tests/test_client_startup.py
@@ -62,3 +69,4 @@ tests/test_storage.py
 tests/test_storage_recovery.py
 tools/check_public_tree.py
 tools/measure_foundation.py
+tools/review_game_baseline.py

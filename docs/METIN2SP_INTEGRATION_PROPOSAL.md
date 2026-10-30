@@ -108,6 +108,8 @@ For the first conversation, the creator-facing outcome is simple: one documented
 
 ### Minimal build and status receipt
 
+The [official baseline review](GAME_BASELINE.md) now gives this request a concrete input boundary: client executable/root pack/configuration/runtime DLLs, the protected server build tree, compiler and stock function list. Update archives alone omit stock quest objects and the function list. Please publish a machine-readable full-baseline digest/inventory together with the update's exact compiler inputs and effective quest inventory (stock plus official overlays/removals). A source commit's older update manifest should not serve as the release asset receipt. This would replace manual archive composition and make supported-build checks easier to maintain; no game source disclosure is needed.
+
 The current Hub probe can associate one Docker game container with a selected folder and observe its state/health. It cannot establish the persistent world or prove that a particular quest deployment is active. This is the concrete gap behind U01 and U06, not a request for a new hosted service.
 
 Propose two small interfaces: a read-only build descriptor shipped with the game, and a read-only `status --json` operation supplied by the launcher/server. Names below are discussion examples, not existing commands or supported SDK fields.

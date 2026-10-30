@@ -41,6 +41,8 @@ python -m mt2sp_hub probe "path/to/Metin2 Singleplayer" --runtime
 
 This optional check reports container state and Docker health. It does not start, stop or repair anything. It accepts a local Windows Docker Desktop endpoint and a single standard Compose file; remote endpoints and ambiguous configurations remain unverified. A healthy container is not proof that the intended add-ons are loaded. [Runtime check details](docs/FOUNDATION.md#optional-docker-runtime-check).
 
+Add `--build` to compare actual files with the [reviewed official build reference](docs/GAME_BASELINE.md). It checks client 2.0.135 / server 2.2.134 inputs, including the complete server build tree. Unknown builds and changed inputs are reported without repair. A reference match still does not enable installation. [Client pack replacement/recovery steps](docs/CLIENT_FILES.md) are tested separately in disposable copies while the full game coordinator is being built.
+
 ## Project boundaries
 
 | Project | Responsibility |

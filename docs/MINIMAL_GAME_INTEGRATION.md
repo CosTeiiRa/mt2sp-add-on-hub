@@ -1,8 +1,8 @@
 # Minimal client/server integration
 
-Status: implementation decision for the next real-adapter work, 30 October 2026. This document defines the boundary; it does **not** enable installation into a game. The current CLI still accepts only synthetic sandboxes. Capability names and runtime calls below must be implemented and tested before they become a supported SDK.
+Status: implementation decision for the next real-adapter work, 30 October 2026. This document defines the boundary; it does **not** enable installation into a game. The current installation commands still accept only synthetic sandboxes. Capability names and runtime calls below must be implemented and tested before they become a supported SDK.
 
-The initial `probe` command now reads a selected game layout and existing ownership metadata without mutation. [Its scope and statuses](FOUNDATION.md#read-only-game-probe) are narrower than the full adapter probe below: build/runtime identity and real attachment are not implemented yet.
+The initial `probe` command reads a selected game layout and existing ownership metadata without mutation. Optional `--runtime` checks a local Docker container's folder association, state and health. [Its scope and statuses](FOUNDATION.md#read-only-game-probe) are narrower than the full adapter probe below: verified builds, persistent-world identity, active deployment receipts and real attachment are not implemented yet.
 
 ## What an author supplies
 

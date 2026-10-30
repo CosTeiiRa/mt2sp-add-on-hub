@@ -31,6 +31,14 @@ python -m mt2sp_hub probe "path/to/Metin2 Singleplayer"
 
 It accepts the game folder, `Klient`, `Serwer` or the client's `pack` folder. It checks expected files and existing Hub ownership records without running Docker or creating state. Add `--json` for a report that omits local paths. A detected layout is **not** a supported-build check; real installation remains disabled. See [probe scope and ownership states](docs/FOUNDATION.md#read-only-game-probe).
 
+To also check whether a local Docker server belongs to that folder:
+
+```powershell
+python -m mt2sp_hub probe "path/to/Metin2 Singleplayer" --runtime
+```
+
+This optional check reports container state and Docker health. It does not start, stop or repair anything. It accepts a local Windows Docker Desktop endpoint and a single standard Compose file; remote endpoints and ambiguous configurations remain unverified. A healthy container is not proof that the intended add-ons are loaded. [Runtime check details](docs/FOUNDATION.md#optional-docker-runtime-check).
+
 ## Project boundaries
 
 | Project | Responsibility |

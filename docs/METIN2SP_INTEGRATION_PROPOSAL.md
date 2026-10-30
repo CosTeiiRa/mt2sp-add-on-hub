@@ -100,6 +100,26 @@ For the first conversation, the creator-facing outcome is simple: one documented
 
 **Fallback:** versioned launcher/container adapters with bounded commands and explicit health limitations. Never accept an arbitrary shell command from a package manifest.
 
+### Minimal build and status receipt
+
+The current Hub probe can associate one Docker game container with a selected folder and observe its state/health. It cannot establish the persistent world or prove that a particular quest deployment is active. This is the concrete gap behind U01 and U06, not a request for a new hosted service.
+
+Propose two small interfaces: a read-only build descriptor shipped with the game, and a read-only `status --json` operation supplied by the launcher/server. Names below are discussion examples, not existing commands or supported SDK fields.
+
+| Field | Where | Required meaning |
+| --- | --- | --- |
+| `schema` | Both | Explicit descriptor version; unknown schemas are unsupported |
+| `client_build`, `server_build`, `quest_compiler_build` | Build descriptor | Stable exact-build identifiers with a documented compatibility policy |
+| `extension_api` and capabilities | Build descriptor | Only interfaces actually available in that build |
+| `world_id` | Local status | Stable identity of the persistent world; define clone/reset behaviour; never a public diagnostic field |
+| `server_build` | Local status | Build actually running, rather than the version file on disk |
+| `deployment_revision` | Local status | Digest of the effective loaded code/quest inventory, including supported add-ons; not a mutable image tag |
+| `phase` and failure codes | Local status | Starting, ready or failed; code/quest-load failures prevent ready status |
+
+Hub compares the active build and deployment revision with the reviewed plan. Missing, stale or mismatched evidence keeps verification pending and blocks a successful installation claim. The status response must exclude credentials, player records, raw logs and environment variables. Hub keeps world identity private and exports only sanitized outcomes.
+
+Acceptance demonstration: start the previous deployment and verify that Hub rejects it as confirmation for a new plan; then load the requested revision and confirm it. A quest-load failure must remain distinguishable from a healthy container. Repeat against a second world to prove that a matching build alone cannot select the wrong save. Until this contract or an equivalent tested adapter exists, container health remains an observation only.
+
 ## U07 Structured reference data
 
 **Request:** provide read-only exports for item/mob definitions, maps, recipes, refinements and supported drop relationships.

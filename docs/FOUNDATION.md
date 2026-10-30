@@ -77,7 +77,7 @@ Settings schemas, semantic quest/content-ID ownership, persistent-data migration
 
 `python -m mt2sp_hub probe "path/to/Metin2 Singleplayer"` inspects a user-selected local layout. Selection also accepts `Klient`, `Serwer`, the client's `pack` directory or an outer folder containing `Metin2 Singleplayer`. It does not scan the home directory or guess an installation from private Studio settings. Ambiguous layouts require a more specific selection.
 
-The probe checks the executable and root-pack files, the server version/data markers, the game Dockerfile and the presence of exactly one recognized Compose filename. It does not parse or execute these game files. Only bounded version labels and existing Hub identity/claim metadata are read. The probe does not read `.env`, database dumps, player data or container environment variables, and invokes no external command.
+The default probe checks the executable and root-pack files, the server version/data markers, the game Dockerfile and the presence of exactly one recognized Compose filename. It does not parse or execute these game files. Only bounded version labels and existing Hub identity/claim metadata are read. Without `--runtime`, it invokes no external command. Neither mode reads `.env`, database dumps, player data or container environment variables.
 
 The default output is short text. `--json` returns the same inspection as structured data with `can_install: false`. Exit code zero means inspection completed, not that installation is allowed. Missing files are reported by fixed relative role names; local absolute paths, installation IDs, arbitrary version-file contents and raw exception details are omitted. Only simple numeric version labels are displayed, and labels are never compatibility proof.
 
@@ -96,7 +96,21 @@ Ownership is an unlocked, read-only snapshot of the selected roots:
 
 The command creates neither control directories nor lock files and never follows a coordinator path obtained from metadata. It reads only the two selected roots. Link/reparse checks apply to files under those roots. Preserve conflicting or unfinished state; there is no force/repair/attach option in this increment.
 
-Build fingerprints, client/process status, active Docker world identity, compiler compatibility, updater exclusion and other managers remain explicitly unverified. The next attach implementation must revalidate under both target locks and persist a recoverable attachment before any real deployment is possible. The synthetic installation commands continue to refuse real ownership records.
+Build fingerprints, client/process status, persistent-world identity, compiler compatibility, updater exclusion and other managers remain explicitly unverified. The next attach implementation must revalidate under both target locks and persist a recoverable attachment before any real deployment is possible. The synthetic installation commands continue to refuse real ownership records.
+
+## Optional Docker runtime check
+
+`probe ROOT --runtime` adds read-only Docker observations. The default probe stays offline. Both text and JSON output omit local paths, context/project names, network endpoints, image/container IDs and raw command errors. Exit zero still means inspection completed, not that installation is allowed.
+
+The first runtime profile accepts only a local Windows named-pipe endpoint. It honors `DOCKER_CONTEXT` before `DOCKER_HOST`, inspects the chosen context locally, then pins daemon calls to the checked endpoint. TCP, SSH, remote pipes and Unix endpoints are outside this profile. Docker Desktop must already be running. No call to Compose, container exec, build, start, stop, pull or repair is made.
+
+The probe lists at most 32 containers labelled as the Compose `game` service. It requests only selected identity, state, health and Compose label fields through a fixed inspection template. Each command has a five-second deadline and a 64 KiB output cap; stderr is discarded. A missing CLI, denied/unavailable daemon, timeout or unsupported response produces a fixed explanation. It neither opens `.env` nor requests container environment, full inspection objects or health logs. These calls use Docker's documented [context inspection](https://docs.docker.com/reference/cli/docker/context/inspect/), [container listing](https://docs.docker.com/reference/cli/docker/container/ls/) and [formatted container inspection](https://docs.docker.com/reference/cli/docker/container/inspect/) interfaces.
+
+Exactly one ordinary game container must match the selected Compose working directory and the single selected Compose file. Labels are compared as strings against the selected binding, never resolved or opened as paths. Additional override files, one-off containers, multiple matches and inconsistent bindings remain unsupported. Other worlds are not selected just because their containers are running. Compose's working-directory/config-file labels are an implementation observation, not a permanent upstream extension API; missing or changed labels fail conservatively.
+
+`folder_binding: matched` means only that these labels matched at inspection time. `image_identity: observed` means an immutable-looking image ID was present; it is not a known-build comparison. Container state and health remain separate. Neither proves persistent-world ownership, compiler compatibility, quest load success or the active deployment revision. The report remains an unlocked snapshot with `can_install: false`. No raw observations are saved or uploaded.
+
+Next: prove a finite build/compiler profile and an active deployment receipt on a disposable game copy, then persist recoverable attachment. The [developer proposal](METIN2SP_INTEGRATION_PROPOSAL.md#minimal-build-and-status-receipt) records the minimal official interface that would remove those uncertainties. Do not infer build support from numeric version labels or teach creators to supply Docker commands.
 
 ## Installation state and locking
 

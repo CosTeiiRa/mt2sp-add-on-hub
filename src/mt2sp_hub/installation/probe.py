@@ -7,6 +7,7 @@ import stat
 
 from ..core.validation import confined, digest, encode, parse_json, read_bounded
 from ..errors import HubError, require
+from .runtime_probe import describe_runtime, inspect_runtime
 
 CONTROL = '.mt2sp-hub'
 COMPOSE_FILES = ('compose.yaml', 'compose.yml', 'docker-compose.yml', 'docker-compose.yaml')
@@ -132,7 +133,7 @@ def ownership(binding):
         return 'invalid'
 
 
-def probe(selected):
+def probe(selected, *, runtime=False):
     binding = locate(selected)
     client_files = {name: _file_status(binding.client, name) for name in CLIENT_FILES}
     world_files = {name: _file_status(binding.world, name) for name in WORLD_FILES}
@@ -143,7 +144,7 @@ def probe(selected):
     else:
         compose_status = 'single' if len(present) == 1 else 'ambiguous' if present else 'missing'
     complete = all(status == 'present' for status in (*client_files.values(), *world_files.values())) and compose_status == 'single'
-    return {
+    report = {
         'mode': 'read_only', 'layout': 'metin2sp_local_docker',
         'layout_complete': complete,
         'client': {'files': client_files, 'version_label': _version(binding.client, 'client.version')},
@@ -154,6 +155,9 @@ def probe(selected):
         'runtime': {'client': 'not_checked', 'server': 'not_checked', 'compiler': 'not_checked',
                     'world_identity': 'not_verified', 'other_managers': 'not_checked'},
         'next_step': 'Real installation requires a verified game adapter and recoverable ownership attachment.'}
+    if runtime:
+        report['runtime'] = inspect_runtime(binding, present[0] if compose_status == 'single' else None)
+    return report
 
 
 def describe(report):
@@ -174,5 +178,7 @@ def describe(report):
               'synthetic': 'Synthetic sandbox state cannot authorize game installation.',
               'invalid': 'Ownership records are unsafe, unreadable or invalid; preserve them.'}
     print(labels[report['ownership']['status']])
-    print('Game installation is disabled. Build, runtime and external-manager checks are still unverified.')
+    if 'docker' in report['runtime']:
+        describe_runtime(report['runtime'])
+    print('Game installation is disabled. Build compatibility, active add-on revision and other managers remain unverified.')
     print('Read-only inspection finished; no state was created or changed.')

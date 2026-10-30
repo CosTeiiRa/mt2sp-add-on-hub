@@ -14,9 +14,10 @@ from .installation.probe import describe, probe
 def parser():
     root = argparse.ArgumentParser(prog="mt2sp-hub", description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
-    inspect_game = commands.add_parser("probe", help="Inspect a selected game layout without writing or running Docker")
+    inspect_game = commands.add_parser("probe", help="Inspect a selected game layout without changing it")
     inspect_game.add_argument("root", type=Path)
     inspect_game.add_argument("--json", action="store_true", help="Return a report without local paths or raw metadata")
+    inspect_game.add_argument("--runtime", action="store_true", help="Also read local Docker status; never starts or changes containers")
     starter = commands.add_parser("new", help="Create an editable sandbox starter (no game code)")
     starter.add_argument("source", type=Path)
     starter.add_argument("--id", required=True, help="Public namespaced ID, for example example.hello")
@@ -50,7 +51,7 @@ def parser():
 
 def run(args):
     if args.command == "probe":
-        return probe(args.root)
+        return probe(args.root, runtime=args.runtime)
     if args.command == "new":
         manifest = create(args.source, args.id, args.kind)
         return {"id": manifest["id"], "version": manifest["version"],

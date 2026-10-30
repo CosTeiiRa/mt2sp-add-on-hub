@@ -276,7 +276,7 @@ class InstallationTests(unittest.TestCase):
 
                 def fail_replace(source, destination):
                     destination = Path(destination)
-                    relative = destination.relative_to(root).as_posix()
+                    relative = destination.relative_to(manager.root).as_posix()
                     if (failure == 'client' and relative.startswith('client/')) or (
                         failure == 'server' and relative.startswith('server/')) or (
                         failure == 'state' and relative.endswith('/state.json')) or (

@@ -1,0 +1,52 @@
+# Local installations, user state and evidence never belong in the source tree.
+/data/
+/local-data/
+/runtime-state/
+/downloads/
+/backups/
+/exports/
+/captures/
+/scratch/
+/.local-review/
+/.test-tmp/
+
+# Credentials and local configuration.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+
+# Generated dependencies and build outputs.
+.vendor/
+.venv/
+venv/
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+/build/
+/dist/
+
+# Logs, databases, archives and game artifacts require explicit publication review.
+*.log
+*.dmp
+*.dump
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.zip
+*.7z
+*.rar
+*.exe
+*.dll
+*.so
+*.eix
+*.epk
+root.index
+root.data

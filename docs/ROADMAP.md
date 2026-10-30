@@ -12,6 +12,18 @@ Build a reliable standalone extension platform before growing the add-on catalog
 - Official game updates remain available independently. Unsupported modules are reported and kept inactive where the integration permits; Hub does not pin users to an old game build.
 - Client and server changes use one reviewed operation, explicit ownership and durable recovery records.
 - Public source, fixtures, diagnostics and artifacts contain no personal installation data or game distribution files.
+- Keep authoring to a small manifest and module files; tools generate checksums and packaging details. Add a new abstraction only when a working module demonstrates the need.
+- Judge ease of use by independent users completing real tasks, not by how many platform features exist.
+
+## Next practical steps
+
+1. **Make the creator loop usable now.** Implemented for synthetic files: `new`, edit, `build`, then the existing reviewed sandbox installation. [Creator guide](CREATING_ADDONS.md). Client, server and combined starters share one format; no manual checksum maintenance.
+2. **Finish the remaining M1 evidence.** Exercise partial-write/flush failures, measure the existing package limits and agree only the adapter boundary needed for the first real examples. Preserve recovery and ownership checks as authoring gets easier.
+3. **Prove small real examples.** One client feature and one server quest/configuration feature, followed by a combined example. A creator must not edit game bootstrap code or Docker build scripts for each add-on. Document missing game hooks in the [developer proposal](METIN2SP_INTEGRATION_PROPOSAL.md).
+4. **Make installation understandable.** Build a small interface around the same engine: select installation, import package, review, install; then enable/disable/remove and a clear recovery action. Prove one complete journey before expanding screens.
+5. **Let other people try it.** A new creator follows public documentation to build and update an add-on; a new user installs and removes it without a terminal. Record where they need help and simplify those steps before the public alpha and library work.
+
+The current snapshot is an engineering preview. The creator loop is tested with text fixtures, not game behaviour; ordinary-user usability and independent creator acceptance are not yet demonstrated. These steps refine the milestones below rather than adding another framework or release track.
 
 ## Milestones
 

@@ -6,6 +6,7 @@ NOTICE.md
 README.md
 config/public-files.txt
 docs/ARCHITECTURE.md
+docs/CREATING_ADDONS.md
 docs/EXTRACTION_AND_MIGRATION.md
 docs/FOUNDATION.md
 docs/METIN2SP_INTEGRATION_PROPOSAL.md
@@ -13,8 +14,10 @@ docs/PUBLICATION_AND_PRIVACY.md
 docs/ROADMAP.md
 pyproject.toml
 sdk/schemas/addon-v2.schema.json
+sdk/schemas/addon-source-v2.schema.json
 src/mt2sp_hub/__init__.py
 src/mt2sp_hub/__main__.py
+src/mt2sp_hub/authoring.py
 src/mt2sp_hub/cli.py
 src/mt2sp_hub/core/__init__.py
 src/mt2sp_hub/core/packages.py
@@ -32,4 +35,3 @@ tests/test_cli.py
 tests/test_installation.py
 tests/test_packages.py
 tools/check_public_tree.py
-tools/make_example.py

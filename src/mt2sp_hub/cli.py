@@ -3,7 +3,8 @@ import argparse
 import json
 from pathlib import Path
 
-from .core.packages import Package, pack
+from .authoring import create
+from .core.packages import Package, build, pack
 from .core.validation import MAX_TOTAL
 from .errors import HubError, require
 from .installation.manager import Manager, initialize
@@ -12,9 +13,18 @@ from .installation.manager import Manager, initialize
 def parser():
     root = argparse.ArgumentParser(prog="mt2sp-hub", description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
-    build = commands.add_parser("pack", help="Validate a source directory and create a deterministic ZIP")
-    build.add_argument("source", type=Path)
-    build.add_argument("output", type=Path)
+    starter = commands.add_parser("new", help="Create an editable sandbox starter (no game code)")
+    starter.add_argument("source", type=Path)
+    starter.add_argument("--id", required=True, help="Public namespaced ID, for example example.hello")
+    starter.add_argument("--kind", choices=("client", "server", "combined"), default="combined")
+    starter.add_argument("--json", action="store_true", help="Return structured output")
+    for name, description in (("build", "Build an author's source and compute payload checksums"),
+                              ("pack", "Pack source while verifying its existing checksums")):
+        command = commands.add_parser(name, help=description)
+        command.add_argument("source", type=Path)
+        command.add_argument("output", type=Path)
+        if name == "build":
+            command.add_argument("--json", action="store_true", help="Return structured output")
     for name in ("validate", "inspect"):
         command = commands.add_parser(name, help="Read a package without executing its payload")
         command.add_argument("archive", type=Path)
@@ -35,11 +45,27 @@ def parser():
 
 
 def run(args):
-    if args.command == "pack":
-        package = pack(args.source)
-        with args.output.open("xb") as stream:
-            stream.write(package.raw)
-        return {"sha256": package.sha256, "bytes": len(package.raw)}
+    if args.command == "new":
+        manifest = create(args.source, args.id, args.kind)
+        return {"id": manifest["id"], "version": manifest["version"],
+                "components": sorted(manifest["components"]), "kind": "synthetic"}
+    if args.command in ("pack", "build"):
+        # Keep artifacts outside the source; otherwise the next build would
+        # correctly refuse the archive as an undeclared input file.
+        require(not args.output.resolve().is_relative_to(args.source.resolve()),
+                "output_in_source", "Put the output archive outside the source folder.")
+        package = (build if args.command == "build" else pack)(args.source)
+        try:
+            with args.output.open("xb") as stream:
+                stream.write(package.raw)
+        except FileExistsError as exc:
+            raise HubError("output_exists", "Output already exists. Choose a new archive filename.") from exc
+        result = {"sha256": package.sha256, "bytes": len(package.raw)}
+        if args.command == "build":
+            manifest = package.manifest
+            result.update(id=manifest["id"], version=manifest["version"],
+                          components=sorted(manifest["components"]))
+        return result
     if args.command in ("inspect", "validate"):
         package = Package.load(args.archive)
         manifest = package.manifest
@@ -72,13 +98,29 @@ def main(argv=None):
     args = parser().parse_args(argv)
     try:
         result = run(args)
-        print(json.dumps(result, indent=2, sort_keys=True))
+        if args.command in ("new", "build") and not args.json:
+            verb = "Created" if args.command == "new" else "Built"
+            print(f"{verb} {result['id']} {result['version']} ({', '.join(result['components'])}).")
+            if args.command == "new":
+                print("Edit addon.json and the files under payload/, then run build.")
+                print("This starter contains sandbox text files, not a working game add-on.")
+            else:
+                print("Checksums generated. Source files unchanged. Ready for sandbox testing.")
+        else:
+            print(json.dumps(result, indent=2, sort_keys=True))
         return 0
     except HubError as exc:
-        print(json.dumps({"error": exc.code, "message": str(exc)}))
-        return 2
+        code, message = exc.code, str(exc)
     except (OSError, ValueError, KeyError, TypeError) as exc:
         # Raw OS exceptions can contain personal paths or credential-bearing text.
         code = "io_error" if isinstance(exc, OSError) else "invalid_record"
-        print(json.dumps({"error": code, "message": "Operation failed; preserve local state and inspect recovery status."}))
-        return 2
+        message = "Operation failed; preserve local state and inspect recovery status."
+        if args.command in ("new", "build"):
+            message = "Could not read or write the project. Check folder permissions and free disk space."
+            if isinstance(exc, FileNotFoundError):
+                message = "An input file or output parent folder is missing. Check the project and folder names."
+    if args.command in ("new", "build") and not args.json:
+        print(f"Error [{code}]: {message}")
+    else:
+        print(json.dumps({"error": code, "message": message}))
+    return 2

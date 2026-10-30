@@ -6,7 +6,7 @@ This is the first M1 increment. It provides an offline package engine and an exp
 
 - Component format 2 for client, server and combined packages, with strict JSON/ZIP validation and declared SHA-256 payloads.
 - Semantic version requirements, deterministic dependency ordering, explicit conflicts, adapter API/capability checks and exclusive file ownership.
-- Deterministic source packing and inspect/validate commands that never execute payloads.
+- Client/server/combined starter creation, automatic build checksums, deterministic source packing and inspect/validate commands that never execute payloads.
 - Installation identity, generation checks, immutable cached package/backup objects, release history and per-target process locking.
 - Reviewed install/update, enable/disable and remove plans. Installed operations use cached objects and work with source archives removed.
 - Journal-before-mutation apply, state commit, receipts and recovery. External changes block restoration.
@@ -18,8 +18,8 @@ Run in a checkout with Python 3.11 or newer. PowerShell examples use ignored `sc
 
 ```powershell
 $env:PYTHONPATH = "src"
-python tools/make_example.py scratch/example --kind combined
-python -m mt2sp_hub pack scratch/example scratch/example.m2addon.zip
+python -m mt2sp_hub new scratch/example --id example.sandbox --kind combined
+python -m mt2sp_hub build scratch/example scratch/example.m2addon.zip
 python -m mt2sp_hub inspect scratch/example.m2addon.zip
 python -m mt2sp_hub sandbox-init scratch/sandbox
 python -m mt2sp_hub plan --root scratch/sandbox --add scratch/example.m2addon.zip
@@ -44,11 +44,13 @@ python -m mt2sp_hub recover --root scratch/sandbox --yes
 
 Do not remove journals or edit their checksums to dismiss a recovery conflict. Preserve the sandbox/control directory for local inspection. A recovered plan is consumed; make a fresh plan before retrying.
 
-The example generator also accepts `--kind client` and `--kind server`. Its text payloads are original conformance examples, not usable game add-ons. The future library remains a separate project.
+The `new` command also accepts `--kind client` and `--kind server`. Its text payloads are original conformance examples, not usable game add-ons. It replaces the initial `tools/make_example.py` helper. Follow the [creator guide](CREATING_ADDONS.md) for editing and updates. The future library remains a separate project.
 
 ## Package format 2
 
-The archive has a root `addon.json` and exactly its declared files under `payload/`. Unknown fields and undeclared source/archive files are rejected. The editor schema is [addon-v2.schema.json](../sdk/schemas/addon-v2.schema.json); the Python validator additionally checks paths, hashes, archive structure and cross-field constraints.
+The archive has a root `addon.json` and exactly its declared files under `payload/`. Unknown fields and undeclared source/archive files are rejected. The editor schemas distinguish [author source](../sdk/schemas/addon-source-v2.schema.json) and [distributed archives](../sdk/schemas/addon-v2.schema.json); the Python validator additionally checks paths, hashes, archive structure and cross-field constraints.
+
+Author source uses the same fields, but may omit each file's `sha256`. `build` computes every checksum from current payload bytes in memory, leaving source unchanged. Existing well-formed source hashes are refreshed; malformed hash fields remain errors. The lower-level `pack` retains strict existing-hash verification. Archives always require and verify hashes; installation never refreshes them. Both commands build deterministic archives without executing payload code and refuse outputs inside the source folder or existing output files.
 
 | Field | Contract |
 | --- | --- |

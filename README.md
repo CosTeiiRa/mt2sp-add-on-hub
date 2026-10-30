@@ -6,17 +6,19 @@ A standalone platform under development for managing client, server and combined
 
 The first usable release must support all three module types. It will target Windows with a local Metin2SP Docker installation. The game remains responsible for gameplay, its launcher and official updates. Installed modules should work with Hub closed.
 
-## Try the foundation
+## Create a first example
 
 Use Python 3.11 or newer. The core and tests need no third-party runtime packages.
 
 ```powershell
 $env:PYTHONPATH = "src"
-python -m unittest discover -s tests -v
-python -m mt2sp_hub --help
+python -m mt2sp_hub new scratch/hello --id example.hello --kind combined
+python -m mt2sp_hub build scratch/hello scratch/hello-0.1.0.zip
 ```
 
-Follow the [sandbox walkthrough and implemented contracts](docs/FOUNDATION.md) to build an original example, inspect a plan and apply or recover it. The current adapter accepts only its own synthetic sandbox marker; it has no game installation path. MIT license and source attribution are in [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
+Follow [Create your first sandbox add-on](docs/CREATING_ADDONS.md) to edit, install, update and remove it. Choose `client`, `server` or `combined`; the builder handles checksums. These starters contain original text fixtures, not playable game features. The current adapter accepts only its own synthetic sandbox marker; it has no game installation path.
+
+For engineering details and tests, see the [foundation contracts](docs/FOUNDATION.md). MIT license and source attribution are in [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md).
 
 ## Project boundaries
 

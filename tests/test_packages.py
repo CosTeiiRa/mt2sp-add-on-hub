@@ -7,7 +7,7 @@ import zipfile
 from pathlib import Path
 from unittest.mock import patch
 
-from mt2sp_hub.core.packages import Package, pack, unpack, validate_manifest
+from mt2sp_hub.core.packages import Package, build, pack, unpack, validate_manifest
 from mt2sp_hub.core.resolver import resolve
 from mt2sp_hub.core.validation import encode, logical_path, parse_json, path_set
 from mt2sp_hub.core.versions import Version, satisfies
@@ -140,6 +140,43 @@ class PackageTests(unittest.TestCase):
                 self.skipTest('Host does not permit creating symbolic links')
             with self.assertRaises(HubError):
                 pack(root)
+            with self.assertRaises(HubError):
+                build(root)
+
+    def test_build_computes_hashes_without_editing_source_or_weakening_archive_validation(self):
+        manifest, files = example()
+        del manifest['components']['client']['files'][0]['sha256']
+        manifest['components']['server']['files'][0]['sha256'] = '0' * 64
+        original = encode(manifest)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'addon.json').write_bytes(original)
+            for name, raw in files.items():
+                path = root / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(raw)
+            result = build(root)
+            self.assertEqual(result.raw, build(root).raw)
+            self.assertEqual((root / 'addon.json').read_bytes(), original)
+            self.assertEqual(result.unpack()[1], package().unpack()[1])
+            with self.assertRaises(HubError):
+                pack(root)
+            with self.assertRaises(HubError):
+                archive(manifest, files).unpack()
+            (root / 'payload/file0.txt').write_bytes(b'Updated source')
+            changed = build(root)
+            self.assertNotEqual(changed.sha256, result.sha256)
+            self.assertIn(b'Updated source', changed.unpack()[1].values())
+            (root / 'private.txt').write_text('undeclared')
+            with self.assertRaises(HubError):
+                build(root)
+
+    def test_build_keeps_strict_checks_for_declared_hashes_and_unknown_fields(self):
+        for key, value in [('sha256', 'bad'), ('extra', True), ('source', '../escape')]:
+            manifest, _ = example()
+            manifest['components']['client']['files'][0][key] = value
+            with self.subTest(field=key), self.assertRaises(HubError):
+                validate_manifest(manifest, source=True)
 
     def test_dependency_order_is_deterministic(self):
         base = package('example.base', files={'server/base': b'b'})

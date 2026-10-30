@@ -12,6 +12,8 @@ There is no requirement to wait for every request before building the foundation
 
 ## Request priorities
 
+For the first conversation, the creator-facing outcome is simple: one documented place for a client module, one documented way to register a server quest/configuration module, and enough build/update information to keep them compatible. U01-U05 describe the small contracts that enable this. Ask the team to demonstrate a minimal module through each path; an add-on author should not need to patch the client bootstrap or a central Dockerfile. Deeper hooks remain feature-driven requests, not prerequisites for every add-on.
+
 | ID | Request | Priority | Hub milestone helped | Can Hub proceed without it? |
 | --- | --- | --- | --- | --- |
 | U01 | Build and capability descriptor | First discussion | M1 to M6 | Yes, with a finite tested adapter/build matrix |

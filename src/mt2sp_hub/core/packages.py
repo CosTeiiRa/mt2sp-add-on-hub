@@ -34,7 +34,8 @@ def fields(value, required):
             "manifest_fields", "Missing or unsupported manifest fields.")
 
 
-def validate_manifest(value):
+def validate_manifest(value, *, source=False):
+    """Source manifests may omit hashes; distributed packages must include them."""
     fields(value, ("format_version", "id", "version", "name", "license", "requires",
                    "conflicts", "components"))
     require(type(value["format_version"]) is int and value["format_version"] == 2,
@@ -79,11 +80,15 @@ def validate_manifest(value):
         require(isinstance(files, list) and 0 < len(files) <= MAX_FILES,
                 "manifest_files", "Components require bounded file lists.")
         for row in files:
-            fields(row, ("source", "target", "sha256"))
+            keys = ("source", "target", "sha256")
+            if source and isinstance(row, dict) and "sha256" not in row:
+                keys = ("source", "target")
+            fields(row, keys)
             sources.append("payload/" + logical_path(row["source"]))
             targets.append(kind + "/" + logical_path(row["target"]))
-            require(isinstance(row["sha256"], str) and SHA.fullmatch(row["sha256"]),
-                    "file_hash", "Invalid payload digest.")
+            if "sha256" in row:
+                require(isinstance(row["sha256"], str) and SHA.fullmatch(row["sha256"]),
+                        "file_hash", "Invalid payload digest.")
     require(len(sources) <= MAX_FILES, "manifest_files", "Too many payload files.")
     path_set(sources)
     path_set(targets)
@@ -170,10 +175,20 @@ def unpack(raw):
 
 
 def pack(directory: Path) -> Package:
-    """Build a deterministic, stored ZIP from declared files only."""
+    """Pack a source with existing hashes, verifying every declared digest."""
+    return _pack(directory, refresh_hashes=False)
+
+
+def build(directory: Path) -> Package:
+    """Compute hashes from author-owned source without changing its manifest."""
+    return _pack(directory, refresh_hashes=True)
+
+
+def _pack(directory: Path, *, refresh_hashes: bool) -> Package:
     directory = Path(directory).resolve()
-    manifest = validate_manifest(parse_json(read_bounded(confined(directory, "addon.json"), MAX_JSON)))
-    members = {"addon.json": encode(manifest)}
+    manifest = validate_manifest(parse_json(read_bounded(confined(directory, "addon.json"), MAX_JSON)),
+                                 source=refresh_hashes)
+    members = {}
     total = 0
     for component in manifest["components"].values():
         for row in component["files"]:
@@ -181,6 +196,9 @@ def pack(directory: Path) -> Package:
             members[source] = read_bounded(confined(directory, source), MAX_FILE)
             total += len(members[source])
             require(total <= MAX_TOTAL, "archive_limit", "Source payload exceeds its size limit.")
+            if refresh_hashes:
+                row["sha256"] = digest(members[source])
+    members["addon.json"] = encode(manifest)
     # Refuse undeclared input files rather than silently excluding secrets.
     actual = set()
     for path in directory.rglob("*"):

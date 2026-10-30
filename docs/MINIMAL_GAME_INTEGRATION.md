@@ -42,7 +42,7 @@ The entry path is a convention, so this first slice needs no new manifest field 
 
 ## Small client runtime
 
-The standalone lifecycle runtime is implemented and tested using invented widgets under host Python. It also passed a local native UI/session harness in an owned client copy under embedded Python 2.7.6. Normal game-phase/bootstrap integration, connected gameplay and a supported game profile remain outstanding. The behavior below is the experimental runtime contract, not a stable SDK compatibility promise.
+The standalone lifecycle runtime and separate [shared Open/Close bridge](CLIENT_HOOKS.md) are implemented and tested using invented widgets under host Python. They also passed local native UI/session harnesses in owned client copies under embedded Python 2.7.6, including binding/restoration of the shipped game class without invoking its gameplay methods. Production bootstrap integration, connected gameplay and a supported game profile remain outstanding. The behavior below is the experimental runtime contract, not a stable SDK compatibility promise.
 
 Use one host-owned bootstrap. At client startup it reads the verified enabled-package list and loads each module's `main.py` in its own namespace. Imports between a module's helper files go through `context.module(name)`; an author need not construct private loader paths. Loading one add-on must not replace another add-on's module in the interpreter cache.
 

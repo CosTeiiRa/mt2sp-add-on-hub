@@ -1,6 +1,6 @@
 # Quest staging and artifact ownership
 
-Status: experimental preparation helpers, not a game installer. These checks do not run Docker, execute quests, change official files or establish build compatibility. A future adapter supplies the verified compiler recipe and baseline inventories, compiles in isolated staging, and passes only successful compiler output to these checks.
+Status: experimental preparation helpers, not a game installer. These validators do not run Docker, execute quests, change official files or establish build compatibility. The companion [isolated compiler helper](QUEST_COMPILATION.md) now runs a fixed bounded recipe and passes only successful captured output through the same ownership checks. A future supported adapter must supply reviewed input pins and complete baseline inventories.
 
 The implementation is [installation/quests.py](../src/mt2sp_hub/installation/quests.py). Authors continue to use the [game-source starter](GAME_CREATORS.md); no installer scripts or new manifest fields are needed.
 
@@ -45,6 +45,6 @@ Synthetic tests cover misleading comments/strings, duplicate declarations, ident
 
 A local isolated compiler experiment compiled an original login greeting and another original quest containing login, conditional/unconditional NPC dialogs and a timer. The ownership reader accepted their 11 artifacts in separate staging directories and rejected reuse of their already occupied paths. Compiler/function-list inputs were mounted read-only, with no network or world-data mounts. Only original generated outputs were retained locally. No game-derived compiler inputs, private paths or build fingerprints are published.
 
-This evidence does not certify a compiler build or deployment. The remaining adapter work is to identify a finite supported compiler/input combination, enumerate the authoritative official quest names/artifacts, run the fixed isolated compiler recipe with resource/time limits, capture its success and artifacts, and prove the running deployment revision. Source identity checks, a successful exit code and filename ownership are necessary checks, not proof that arbitrary quest behavior is harmless.
+The [compiler implementation and native evidence](QUEST_COMPILATION.md) now cover fixed execution, input pins, resource/time limits, captured artifacts, preparation receipts and temporary-container cleanup. The remaining adapter work is to identify a finite supported compiler/input combination, enumerate authoritative official quest names/artifacts, coordinate the full selection and prove the running deployment revision. Source identity checks, a successful exit code and filename ownership are necessary checks, not proof that arbitrary quest behavior is harmless.
 
 Keep the existing server running through preflight and compilation. Only a reviewed, recoverable operation may replace artifacts or restart it. The [integration decision](MINIMAL_GAME_INTEGRATION.md) and [U04/U06 developer requests](METIN2SP_INTEGRATION_PROPOSAL.md#u04-server-extension-entry-points) describe the required include, build and status boundaries.

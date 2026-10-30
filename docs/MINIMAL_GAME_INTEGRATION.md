@@ -65,7 +65,7 @@ For the first release, close the client before installing, updating, disabling o
 
 ## Small server integration
 
-The [quest-staging helpers](QUEST_STAGING.md) implement source identity/collision checks and read-only compiler artifact validation. Local original quests passed those checks using actual compiler output. The exact compiler profile, authoritative official inventories, compilation orchestration and deployment remain unimplemented.
+The [quest-staging helpers](QUEST_STAGING.md) implement source identity/collision checks and compiler artifact validation. The [fixed isolated compiler](QUEST_COMPILATION.md) now verifies input pins, captures validated output/preparation receipts and confirms temporary-container cleanup; local original quests and timeout fixtures passed. A supported build/compiler profile, authoritative official inventories, full-selection coordination and deployment remain unimplemented.
 
 Accept one named quest per `.quest` file under the package namespace. The declared quest name must match the filename. The starter will generate a readable prefixed name such as `example_hello_greeting`; the adapter checks the actual name against both official quests and every selected add-on. Package dependencies do not permit duplicate quest names. Prefix conversion alone is not a uniqueness guarantee.
 

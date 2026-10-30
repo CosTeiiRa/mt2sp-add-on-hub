@@ -84,7 +84,7 @@ For the first conversation, the creator-facing outcome is simple: one documented
 
 **Fallback:** a finite adapter for existing supported quest/configuration mechanisms. Resources without a verified composition/deployment path are unavailable. This request is the main enabler for broad server modules; it does not require native dynamic libraries in the first release.
 
-**Current demonstration:** original login, dialog and timer fixtures compiled in isolated temporary storage and passed the [artifact ownership checks](QUEST_STAGING.md); conflicting output is refused. Malformed source was rejected in a separate compiler experiment. The missing contract is a versioned compiler/input recipe with an authoritative artifact/quest inventory and one supported include path. That lets the existing checks run against complete baseline data without each author modifying the game's build. Compilation alone does not demonstrate loading, removal or update compatibility.
+**Current demonstration:** the [fixed isolated compiler](QUEST_COMPILATION.md) verifies pinned inputs and captures validated artifacts plus a preparation receipt. Native login/dialog/timer fixtures produced 11 artifacts; malformed source and timeout fixtures were rejected, cleanup was verified, and no host/world-data mount or live restart was used. The missing contract is a versioned compiler/input recipe with an authoritative artifact/quest inventory and one supported include path. Please also provide structured error fields such as quest name, source line and error code, so creators can fix syntax errors without exposing raw logs or local paths. Compilation alone does not demonstrate loading, removal or update compatibility.
 
 ## U05 Updater cooperation
 

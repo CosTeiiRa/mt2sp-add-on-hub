@@ -151,6 +151,34 @@ def _artifact_path(name, relative):
     return 'handler'
 
 
+def validate_artifacts(quest, files, *, occupied_paths):
+    """Validate captured compiler bytes from a directory or bounded transport."""
+    _name(quest.name)
+    require(isinstance(occupied_paths, (set, frozenset)), 'quest_inventory', 'Provide the verified occupied artifact paths.')
+    require(isinstance(files, dict) and len(files) <= MAX_FILES,
+            'quest_artifact_limit', 'Too many compiler artifacts.')
+    path_set([*occupied_paths, *files])
+    groups, total = {}, 0
+    for path, raw in files.items():
+        require(path.startswith('object/'), 'quest_artifact', 'Unexpected quest artifact root.')
+        relative = path[len('object/'):]
+        _artifact_path(quest.name, relative)
+        require(isinstance(raw, bytes) and len(raw) <= MAX_FILE,
+                'quest_artifact_limit', 'Compiler artifacts must be bounded bytes.')
+        total += len(raw)
+        require(total <= MAX_TOTAL, 'quest_artifact_limit', 'Compiler output exceeds the package limits.')
+        require(raw or re.search(r'\.[0-9]+\.when\Z', relative),
+                'quest_artifact', 'A required compiler artifact is empty.')
+        if re.search(r'\.[0-9]+\.(?:arg|when|script)\Z', relative):
+            group, suffix = relative.rsplit('.', 1)
+            groups.setdefault(group, set()).add(suffix)
+    require('object/state/' + quest.name in files and len(files) > 1,
+            'quest_artifact', 'Compiler must emit the declared state and at least one handler.')
+    require(all(suffixes == {'arg', 'when', 'script'} for suffixes in groups.values()),
+            'quest_artifact', 'A dialog artifact group is incomplete.')
+    return dict(sorted(files.items()))
+
+
 def read_artifacts(quest, output_directory, *, occupied_paths):
     """Read one compiler's object/ directory without following links or writing.
 
@@ -162,7 +190,7 @@ def read_artifacts(quest, output_directory, *, occupied_paths):
     require(isinstance(occupied_paths, (set, frozenset)), 'quest_inventory', 'Provide the verified occupied artifact paths.')
     path_set(occupied_paths)
     root = Path(output_directory).absolute()
-    files, directories, groups, stack, total, count = {}, [], {}, [('', root)], 0, 0
+    files, directories, stack, total, count = {}, [], [('', root)], 0, 0
     try:
         confined(root, 'state')  # Also checks the output root itself for links.
         require(root.is_dir(), 'quest_artifact', 'Compiler output directory is missing.')
@@ -193,20 +221,10 @@ def read_artifacts(quest, output_directory, *, occupied_paths):
                             == (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns)
                             and len(raw) == info.st_size,
                             'quest_artifact_changed', 'Compiler output changed during inspection; compile again in isolated staging.')
-                    conditional = re.search(r'\.[0-9]+\.when\Z', relative)
-                    require(raw or conditional, 'quest_artifact', 'A required compiler artifact is empty.')
-                    if re.search(r'\.[0-9]+\.(?:arg|when|script)\Z', relative):
-                        group, suffix = relative.rsplit('.', 1)
-                        groups.setdefault(group, set()).add(suffix)
                     files['object/' + relative] = raw
                     total += len(raw)
-        require('object/state/' + quest.name in files and len(files) > 1,
-                'quest_artifact', 'Compiler must emit the declared state and at least one handler.')
-        require(all(suffixes == {'arg', 'when', 'script'} for suffixes in groups.values()),
-                'quest_artifact', 'A dialog artifact group is incomplete.')
         require(all(any(path.startswith('object/' + directory) for path in files) for directory in directories),
                 'quest_artifact', 'Compiler emitted an unused directory.')
-        path_set([*occupied_paths, *files])
-        return dict(sorted(files.items()))
+        return validate_artifacts(quest, files, occupied_paths=occupied_paths)
     except OSError as exc:
         raise HubError('quest_artifact_io', 'Could not read compiler output; preserve the baseline and discard this staging result.') from exc

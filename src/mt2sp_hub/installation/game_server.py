@@ -283,7 +283,10 @@ class Server:
         require(not (set(artifacts) & set(baseline['quests'])), 'quest_collision', 'Selected quest artifacts overlap official files.')
         path_set(artifacts)
         desired = {**baseline['quests'], **{p: digest(raw) for p, raw in artifacts.items()}}
-        dockerfile = ('FROM ' + baseline['image'] + '\n').encode()
+        # Dockerfile FROM needs a repository reference, not the local image's
+        # config ID. Use our reserved tag, checking its exact ID on both sides
+        # of the build; the resulting deployment is recorded by immutable ID.
+        dockerfile = ('FROM ' + baseline['tag'] + '\n').encode()
         if artifacts:
             dockerfile += b'COPY object/ /opt/metin2/share/locale/poland/quest/object/\n'
         stream = io.BytesIO()
@@ -296,6 +299,7 @@ class Server:
         output = self.command(['build', '--quiet', '--pull=false', '--tag', tag, '-'], incoming=stream.getvalue(),
                               timeout=180, limit=65536)
         image = output.decode().strip()
+        self.verify_image(baseline['tag'], baseline['image'])
         require(IMAGE_ID.fullmatch(image) and self.image_inventory(image) == desired,
                 'server_build', 'Prepared server image has an unexpected quest inventory.')
         return {'tag': tag, 'image': image, 'quests': desired}

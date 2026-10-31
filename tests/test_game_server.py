@@ -120,7 +120,7 @@ class ServerTests(unittest.TestCase):
                 cleanup.assert_called_once()
                 self.assertEqual(args[args.index('--name') + 1], 'mt2sp-hub-inspect-' + cleanup.call_args.args[3])
 
-    def test_prepared_image_uses_only_immutable_baseline_and_compiled_resources(self):
+    def test_prepared_image_checks_retained_baseline_before_and_after_build(self):
         baseline = {'tag': self.tag, 'image': self.image, 'quests': self.expected['quests']}
         artifacts = {'object/state/example_quest': b'invented compiled quest'}
         desired = {**baseline['quests'], **{p: digest(raw) for p, raw in artifacts.items()}}
@@ -128,10 +128,11 @@ class ServerTests(unittest.TestCase):
              patch.object(self.server, 'image_inventory', return_value=desired):
             output = self.server.build_selection(baseline, artifacts)
             self.assertEqual(output['quests'], desired)
-            verify.assert_called_once_with(self.tag, self.image)
+            self.assertEqual(verify.call_count, 2)
+            self.assertTrue(all(call.args == (self.tag, self.image) for call in verify.call_args_list))
             with tarfile.open(fileobj=io.BytesIO(command.call_args.kwargs['incoming'])) as archive:
                 self.assertEqual(set(archive.getnames()), {'Dockerfile', *artifacts})
-                self.assertIn(self.image.encode(), archive.extractfile('Dockerfile').read())
+                self.assertIn(self.tag.encode(), archive.extractfile('Dockerfile').read())
         with patch.object(self.server, 'verify_image'), patch.object(self.server, 'command') as command:
             for artifacts in ({'Dockerfile': b'unsafe'}, {'object/state/stock': b'collision'}, {'object/../outside': b'escape'}):
                 with self.assertRaises(HubError):

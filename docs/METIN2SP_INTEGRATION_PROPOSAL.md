@@ -194,6 +194,23 @@ The project's published README describes a protected server distribution and men
 
 ### Concrete findings from the first client/quest adapter
 
+The teaching examples fit the existing contracts: a client session timer, a
+server hunt quest and a short mount trial with an optional status panel. They
+do not need a new message channel, SQL migration API or general data writer.
+Keep those capabilities driven by an actual add-on requirement.
+
+Two small gameplay contracts would make the next examples safer to maintain:
+
+- Document whether a one-time reward can atomically check a quest-scoped claim
+  key and grant an item. Separate flag/item writes leave a crash boundary that
+  deployment recovery cannot repair. If no such operation exists, document the
+  limitation; do not describe ordinary repeat-click protection as exactly-once
+  delivery.
+- Document native mount duration, reconnect/death/map-change behavior and
+  cleanup when the granting quest is absent. A short ride using an already
+  mapped local appearance can use the existing quest API. Extra bonuses and
+  mounted combat still require their own supported capabilities and tests.
+
 The reviewed build already provides a persistent world identifier shared by
 the database, game data and spool. Please preserve and document this identity
 across ordinary restarts, and specify its behavior for reset, clone and restore.

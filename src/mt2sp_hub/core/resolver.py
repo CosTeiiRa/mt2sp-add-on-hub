@@ -49,3 +49,9 @@ def resolve(packages, apis=None, capabilities=None):
     for ident in sorted(selected):
         visit(ident)
     return ordered, outputs, owners
+
+
+def selection_changes(before, after):
+    """Describe the actual prepared selection for CLI and desktop review."""
+    return [{'id': ident, 'before': before.get(ident), 'after': after.get(ident)}
+            for ident in sorted(set(before) | set(after)) if before.get(ident) != after.get(ident)]

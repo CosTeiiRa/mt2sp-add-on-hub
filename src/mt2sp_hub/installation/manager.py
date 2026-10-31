@@ -13,7 +13,7 @@ from pathlib import Path
 
 from ..errors import require
 from ..core.packages import Package
-from ..core.resolver import resolve
+from ..core.resolver import resolve, selection_changes
 from ..core.validation import (MAX_FILE, MAX_FILES, MAX_PACKAGES, MAX_SELECTED_ARCHIVES, MAX_TOTAL, confined, digest,
                                identifier, path_set, read_bounded)
 from .locking import exclusive
@@ -204,13 +204,7 @@ class Manager:
     def _summary(plan):
         return {"plan": plan["id"], "generation": plan["before"]["generation"],
                 "packages": sorted(plan["after"]["installed"]), "order": plan["order"],
-                "selection_changes": [{"id": ident,
-                                       "before": plan["before"]["installed"].get(ident),
-                                       "after": plan["after"]["installed"].get(ident)}
-                                      for ident in sorted(set(plan["before"]["installed"]) |
-                                                          set(plan["after"]["installed"]))
-                                      if plan["before"]["installed"].get(ident) !=
-                                      plan["after"]["installed"].get(ident)],
+                "selection_changes": selection_changes(plan['before']['installed'], plan['after']['installed']),
                 "changes": [row for row in plan["changes"] if row["before"] != row["after"]]}
 
     def _validate_plan(self, plan):

@@ -14,6 +14,8 @@ from .installation.probe import describe, probe
 def parser():
     root = argparse.ArgumentParser(prog="mt2sp-hub", description=__doc__)
     commands = root.add_subparsers(dest="command", required=True)
+    desktop = commands.add_parser('gui', help='Open the local desktop installation and recovery interface')
+    desktop.add_argument('--root', type=Path, help='Start with a selected game or existing practice sandbox')
     inspect_game = commands.add_parser("probe", help="Inspect a selected game layout without changing it")
     inspect_game.add_argument("root", type=Path)
     inspect_game.add_argument("--json", action="store_true", help="Return a report without local paths or raw metadata")
@@ -133,6 +135,9 @@ def run(args):
 
 def main(argv=None):
     args = parser().parse_args(argv)
+    if args.command == 'gui':
+        from .desktop import launch
+        return launch(args.root)
     try:
         result = run(args)
         if args.command == "probe" and not args.json:

@@ -10,6 +10,7 @@ docs/CLIENT_FILES.md
 docs/CLIENT_HOOKS.md
 docs/CLIENT_STARTUP.md
 docs/CREATING_ADDONS.md
+docs/DESKTOP.md
 docs/EXTRACTION_AND_MIGRATION.md
 docs/FOUNDATION.md
 docs/GAME_BASELINE.md
@@ -36,6 +37,7 @@ src/mt2sp_hub/core/packages.py
 src/mt2sp_hub/core/resolver.py
 src/mt2sp_hub/core/validation.py
 src/mt2sp_hub/core/versions.py
+src/mt2sp_hub/desktop.py
 src/mt2sp_hub/errors.py
 src/mt2sp_hub/installation/__init__.py
 src/mt2sp_hub/installation/baseline.py
@@ -65,6 +67,7 @@ tests/test_client_hooks.py
 tests/test_client_runtime.py
 tests/test_client_startup.py
 tests/test_compiler.py
+tests/test_desktop.py
 tests/test_game_creators.py
 tests/test_game_lifecycle.py
 tests/test_game_server.py

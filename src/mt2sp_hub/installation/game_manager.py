@@ -9,6 +9,7 @@ import shutil
 import uuid
 
 from ..core.packages import Package
+from ..core.resolver import selection_changes
 from ..core.validation import (MAX_FILE, MAX_FILES, MAX_PACKAGES, MAX_SELECTED_ARCHIVES, MAX_TOTAL,
                                SHA, confined, digest, encode, identifier, path_set, read_bounded)
 from ..errors import HubError, require
@@ -368,7 +369,8 @@ class GameManager:
             self.store.envelope('preparations/' + plan['id'] + '.json', receipts)
             self.store.envelope('plans/' + plan['id'] + '.json', plan)
             return {'plan': plan['id'], 'packages': sorted(selected), 'server_restart': server_changed,
-                    'client_close_required': True, 'player_quest_state': 'retained'}
+                    'client_close_required': True, 'player_quest_state': 'retained',
+                    'selection_changes': selection_changes(before['installed'], selected)}
 
     def _validate_plan(self, plan):
         require(isinstance(plan, dict) and set(plan) == {'schema', 'id', 'installation', 'before', 'after', 'client', 'changes', 'server_changed'}

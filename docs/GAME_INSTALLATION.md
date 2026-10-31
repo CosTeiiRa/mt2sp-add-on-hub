@@ -8,6 +8,10 @@ world, or a copied ownership record cannot register itself as supported.
 
 ## Creator and operator workflow
 
+The [desktop preview](DESKTOP.md) provides folder selection, setup, ZIP import,
+review/apply, installed-package actions and recovery through the same commands.
+The CLI below remains available for creators and scripted checks.
+
 Install the optional game codec once, from a Hub checkout with Python 3.11+:
 
 ```powershell
@@ -145,7 +149,8 @@ silently adopt it. Existing attachments cannot yet migrate across official build
 running `attach` again does not adopt an updated baseline. Test a newly reviewed
 build in a fresh, separate installation and retain the old world and recovery
 records. Build migration, relocation, remote server management, binary patching,
-catalog and management UI are not included. Independent creator usability trials
+catalog and a standalone installer are not included. The first desktop window
+uses this same coordinator. Independent creator usability trials
 remain a public-alpha gate.
 
 The smallest upstream improvements are recorded in the

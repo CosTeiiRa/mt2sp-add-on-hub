@@ -12,7 +12,7 @@ The initial staging profile requires:
 
 - A server component requesting only `server.quest`, with an API range accepting `1.0.0`.
 - One `.quest` file directly under the logical target `PACKAGE_ID/quests/NAME.quest`.
-- A declaration matching the filename, with the package ID's dots/hyphens converted to underscores followed by `_` as its prefix. Quest identifiers are at most 64 ASCII characters.
+- A declaration matching the filename, with the package ID's dots/hyphens converted to underscores followed by `_` as its prefix. Quest identifiers are at most 32 ASCII characters (the reviewed database namespace limit).
 - Exactly one `quest NAME begin` declaration at the start, after comments/whitespace. Strings and Lua line/long comments cannot impersonate declarations. Quoted strings and long brackets must terminate.
 - ASCII source with LF or CRLF line endings. CRLF is normalized for compilation, but limits count the original archive bytes. A different encoding requires a reviewed compiler profile.
 - No name collision with official quests or another selected package, including case aliases. Prefix conversion alone is not unique: two distinct package IDs can produce the same quest prefix.

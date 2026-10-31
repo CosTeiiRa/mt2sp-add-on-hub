@@ -67,16 +67,16 @@ def write_fault(target, stage):
         if stage == 'crash-replaced':
             os._exit(73)
 
-    def write(path, raw):
+    def write(path, raw, **kwargs):
         if path != target:
-            return original_write(path, raw)
+            return original_write(path, raw, **kwargs)
         with ExitStack() as patches:
             patches.enter_context(patch.object(Path, 'open', open_stream))
             patches.enter_context(patch.object(storage.os, 'fsync', fsync))
             patches.enter_context(patch.object(storage.os, 'replace', replace))
             if stage == 'directory-sync':
                 patches.enter_context(patch.object(storage, 'sync_directory', lambda _: disk_error()))
-            return original_write(path, raw)
+            return original_write(path, raw, **kwargs)
 
     with patch('mt2sp_hub.installation.storage.atomic_write', write), \
             patch('mt2sp_hub.installation.manager.atomic_write', write):

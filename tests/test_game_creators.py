@@ -57,6 +57,15 @@ class GameCreatorTests(unittest.TestCase):
         package = build(source)
         self.assertEqual(package.manifest['id'], 'example.hello')
 
+    def test_quest_starter_fits_persistent_namespace_boundary(self):
+        create(self.root / 'boundary', 'example.' + 'a' * 15, 'server', profile='game')
+        package = build(self.root / 'boundary')
+        filename = package.manifest['components']['server']['files'][0]['target'].split('/')[-1]
+        self.assertEqual(len(filename.removesuffix('.quest')), 32)
+        with self.assertRaises(HubError):
+            create(self.root / 'too-long', 'example.' + 'a' * 16, 'server', profile='game')
+        self.assertFalse((self.root / 'too-long').exists())
+
     def test_bad_profile_or_long_generated_quest_name_creates_nothing(self):
         source = self.root / 'source'
         for ident, profile, expected in (('example.hello', 'unknown', 'profile'),

@@ -10,6 +10,9 @@ requires-python = ">=3.11"
 license = {file = "LICENSE"}
 dependencies = []
 
+[project.optional-dependencies]
+game = ["lzokay==2.1.0"]
+
 [project.scripts]
 mt2sp-hub = "mt2sp_hub.cli:main"
 

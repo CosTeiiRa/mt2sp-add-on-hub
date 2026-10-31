@@ -192,6 +192,31 @@ The project's published README describes a protected server distribution and men
 
 ## Proposed discussion brief
 
+### Concrete findings from the first client/quest adapter
+
+The reviewed build already provides a persistent world identifier shared by
+the database, game data and spool. Please preserve and document this identity
+across ordinary restarts, and specify its behavior for reset, clone and restore.
+No second world-ID service is needed.
+
+The official image recipe already includes namespaced compiled objects from
+the stock quest directory. A documented extension directory and compiler/input
+inventory would remove most of the guarded fallback without a larger API.
+Please also document the 32-character persisted quest namespace limit and a
+stable way to confirm the loaded quest revision after startup.
+
+The remaining coordination gap is a launcher/updater lock and a stable
+world-specific image/deployment reference. An ordinary image rebuild must not
+silently invalidate another tool's recovery target. A small shared lock and
+revision receipt would be sufficient; a hosted service is unnecessary.
+
+Mounts are the next concrete content use case: document activation, bonus-ID
+types, duration/expiry, mounted-attack support and active-effect cleanup for
+offline as well as online players. Provide a scoped data override/asset lookup
+contract if possible. Keep any general combat-bonus cap setting separate from
+mount activation. These hooks would avoid per-build executable repairs in
+ordinary add-ons; no native patch capability is proposed for the first SDK.
+
 > We are building a standalone extension platform for Metin2SP with client, server and combined modules. It will manage packages, compatibility, deployment and recovery independently of our authoring tools.
 >
 > Once our foundation demonstration is ready, we would like to agree on a small supported integration boundary: build/capability metadata, preserved module directories, a client loader, a server quest/configuration path, and updater coordination.

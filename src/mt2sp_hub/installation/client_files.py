@@ -1,4 +1,4 @@
-"""Fixed client-pack file steps for the future game coordinator.
+"""Fixed client-pack file steps for the game coordinator.
 
 These internal steps do not authorize installation. The caller must hold both
 target locks, verify the build/ownership and closed client, and durably journal

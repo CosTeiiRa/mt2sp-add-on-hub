@@ -1,4 +1,4 @@
-"""Offline CLI for the experimental package and sandbox foundation."""
+"""CLI for packages, synthetic sandboxes and reviewed local game installations."""
 import argparse
 import json
 from pathlib import Path
@@ -24,7 +24,7 @@ def parser():
     starter.add_argument("--id", required=True, help="Public namespaced ID, for example example.hello")
     starter.add_argument("--kind", choices=("client", "server", "combined"), default="combined")
     starter.add_argument("--profile", choices=("sandbox", "game"), default="sandbox",
-                         help="Game creates experimental Python/quest sources; real installation is not enabled")
+                         help="Game creates experimental Python/quest sources for the reviewed game adapter")
     starter.add_argument("--json", action="store_true", help="Return structured output")
     for name, description in (("build", "Build an author's source and compute payload checksums"),
                               ("pack", "Pack source while verifying its existing checksums")):
@@ -38,6 +38,9 @@ def parser():
         command.add_argument("archive", type=Path)
     init = commands.add_parser("sandbox-init", help="Initialize an empty, disposable synthetic target")
     init.add_argument("root", type=Path)
+    attach_game = commands.add_parser("attach", help="Attach a reviewed game installation with recoverable ownership")
+    attach_game.add_argument("root", type=Path)
+    attach_game.add_argument("--yes", action="store_true", help="Confirm creating Hub ownership and a world-specific image reference")
     for name in ("status", "plan", "apply", "recover"):
         command = commands.add_parser(name)
         command.add_argument("--root", type=Path, required=True)
@@ -87,7 +90,30 @@ def run(args):
         return result
     if args.command == "sandbox-init":
         return initialize(args.root)
-    manager = Manager(args.root)
+    if args.command == "attach":
+        require(args.yes, "confirmation_required", "Pass --yes to attach this reviewed game installation.")
+        from .installation.game_manager import attach
+        return attach(args.root)
+    # A synthetic marker selects only the synthetic writer. Otherwise a game
+    # must have the matching fixed world/client claims; layout alone is never
+    # permission to write to it.
+    from .installation.probe import _record, locate
+    if (args.root / '.mt2sp-hub/identity.json').is_file() and _record(args.root.resolve(), 'identity.json').get('kind') == 'synthetic':
+        manager = Manager(args.root)
+    else:
+        from .installation.game_manager import GameManager, attach
+        binding = locate(args.root)
+        try:
+            identity = _record(binding.world, 'identity.json')
+        except FileNotFoundError:
+            raise HubError('game_not_attached', 'Run attach for this game folder before planning installation.') from None
+        if identity.get('attachment') == 'pending':
+            if args.command == 'recover':
+                require(args.yes, 'confirmation_required', 'Pass --yes to recover the pending attachment.')
+                return attach(args.root)
+            require(args.command == 'status', 'recovery_required', 'Recover the pending attachment first.')
+            return {'kind': 'metin2sp', 'attachment': 'pending', 'recovery_required': True}
+        manager = GameManager(args.root)
     if args.command == "status":
         return manager.status()
     if args.command == "plan":

@@ -15,7 +15,7 @@ from ..core.validation import (MAX_FILE, MAX_FILES, MAX_PACKAGES, MAX_TOTAL,
 from ..core.versions import satisfies
 from ..errors import HubError, require
 
-NAME = r'[A-Za-z_][A-Za-z0-9_]{0,63}'
+NAME = r'[A-Za-z_][A-Za-z0-9_]{0,31}'
 WORD = re.compile(r'[A-Za-z_][A-Za-z0-9_]*')
 LONG_STRING = re.compile(r'\[(=*)\[')
 
@@ -33,7 +33,7 @@ class QuestSource:
 
 def _name(value):
     require(isinstance(value, str) and re.fullmatch(NAME, value),
-            'quest_name', 'Quest names must be ASCII identifiers of at most 64 characters.')
+            'quest_name', 'Quest names must fit the reviewed 32-character persistent quest namespace.')
     logical_path(value)
     return value
 

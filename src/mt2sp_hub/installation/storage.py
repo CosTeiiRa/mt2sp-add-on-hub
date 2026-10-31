@@ -21,9 +21,11 @@ def sync_directory(directory):
             os.close(descriptor)
 
 
-def atomic_write(path: Path, raw: bytes):
+def atomic_write(path: Path, raw: bytes, *, temporary_directory=None):
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(".hub-" + uuid.uuid4().hex + ".tmp")
+    directory = path.parent if temporary_directory is None else temporary_directory
+    directory.mkdir(parents=True, exist_ok=True)
+    temporary = directory / (".hub-" + uuid.uuid4().hex + ".tmp")
     created = False
     try:
         with temporary.open("xb") as stream:
@@ -34,6 +36,8 @@ def atomic_write(path: Path, raw: bytes):
             os.fsync(stream.fileno())
         os.replace(temporary, path)
         sync_directory(path.parent)
+        if directory != path.parent:
+            sync_directory(directory)
     finally:
         if created:
             temporary.unlink(missing_ok=True)

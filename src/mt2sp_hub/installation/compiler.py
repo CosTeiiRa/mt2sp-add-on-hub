@@ -139,11 +139,11 @@ def _artifacts(quest, raw, occupied_paths):
         raise HubError('compiler_archive', 'Compiler artifact archive could not be read.') from None
 
 
-def _cleanup(executable, prefix, environment, token):
+def _cleanup(executable, prefix, environment, token, *, name_prefix='mt2sp-hub-compile-', label=LABEL):
     """Remove only this operation's exact name AND random ownership label."""
-    name = 'mt2sp-hub-compile-' + token
+    name = name_prefix + token
     query = [*prefix, 'container', 'ls', '--all', '--no-trunc', '--filter', 'name=^/' + name + '$',
-             '--filter', 'label=' + LABEL + '=' + token, '--format', '{{.ID}}']
+             '--filter', 'label=' + label + '=' + token, '--format', '{{.ID}}']
     try:
         code, raw = _run(executable, query, environment)
         require(code == 0, 'compiler_cleanup', 'Could not inspect compiler cleanup.')

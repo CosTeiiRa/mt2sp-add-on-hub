@@ -6,6 +6,7 @@ activation or certify gameplay. See docs/GAME_BASELINE.md for provenance.
 
 PROFILE = {
     "client_version": "2.0.135",
+    "compose_sha256": "1be6ad9bc27315b691495c54c47245d64c021a366f181aa10f7dcce9878290b1",
     "files": {
         "client": {
             "D3DCompiler_43.dll": {

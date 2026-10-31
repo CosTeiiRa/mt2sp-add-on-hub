@@ -74,7 +74,9 @@ def derive(archives):
     inputs = ('Dockerfile', 'bin/qc', 'bin/game', 'bin/db', 'scripts/entrypoint.sh',
               'share/locale/poland/quest/quest_functions')
     prefix = 'linux-port/docker/game/'
+    compose = inventory(archives['server'], '', lambda p: p == 'linux-port/docker/docker-compose.yml')
     return {**{key: PROFILE[key] for key in ('id', 'client_version', 'server_version', 'sources')},
+            'compose_sha256': compose['linux-port/docker/docker-compose.yml']['sha256'],
             'files': {'client': dict(sorted(files.items())),
                       'server': {prefix + p: server[p] for p in inputs}},
             'server_trees': {prefix.rstrip('/'): tree_digest(server)}}

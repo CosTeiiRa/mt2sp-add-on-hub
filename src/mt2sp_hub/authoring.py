@@ -59,7 +59,7 @@ def _game_sources(ident, kinds):
         result['client'] = {'main.py': CLIENT_MAIN, 'window.py': CLIENT_WINDOW}
     if 'server' in kinds:
         name = ident.replace('.', '_').replace('-', '_') + '_greeting'
-        require(len(name) <= 64, 'quest_name', 'Use a shorter package ID for this quest starter (at most 55 characters).')
+        require(len(name) <= 32, 'quest_name', 'Use a shorter package ID for this quest starter (at most 23 characters).')
         result['server'] = {name + '.quest': (
             'quest ' + name + ' begin\n'
             '    state start begin\n'

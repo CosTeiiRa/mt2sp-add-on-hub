@@ -2,7 +2,7 @@
 
 The experimental host can now prepare validated client packages for one shared startup entry. Creators still use [new, edit, build](GAME_CREATORS.md). They do not supply loader code, modify game scripts or manage checksums.
 
-This is preparation and runtime code, not an installer. The CLI still refuses real game installation. A supported build, verified startup insertion, pack composition and recoverable deployment remain adapter responsibilities.
+This is preparation and runtime code, not an installer. The [game coordinator](GAME_INSTALLATION.md) supplies the exact build checks, startup insertion, pack composition and recoverable deployment.
 
 ## Prepare enabled packages
 
@@ -24,7 +24,7 @@ The launcher sets `MT2SP_HUB_SAFE_MODE=1` in the child client's environment for 
 
 Startup runs once per client process. Repeated calls with the same unchanged binding return that binding; another class, changed hooks, detached state or a failed first startup cannot silently create a second host. Clear failures with a fresh client launch, not an in-process retry. The bootstrap also refuses an already occupied runtime/payload module cache.
 
-Client modules register in dependency order. If registration fails, their client dependents are skipped, including dependencies reached through server-only packages. Unrelated modules can still load. This does not confirm that any required server component is running: the future coordinator must verify that deployment before enabling the selection. Encoded payload copies are released after startup; each runtime context retains the source bytes it needs for lazy helpers.
+Client modules register in dependency order. If registration fails, their client dependents are skipped, including dependencies reached through server-only packages. Unrelated modules can still load. This does not confirm that any required server component is running: the coordinator verifies that deployment before enabling the selection. Encoded payload copies are released after startup; each runtime context retains the source bytes it needs for lazy helpers.
 
 The return value is the shared binding, or `None` after safe launch/startup failure. Host teardown calls `binding.detach()` when present. Optional `diagnostic(package_id_or_None, code)` receives the runtime's fixed codes plus `dependency_failed`, `startup_failed`, `startup_conflict` or `startup_cleanup_failed`; `None` identifies a host failure. Raw exception text, paths and tracebacks are excluded. Ordinary Python exception handling is not a security sandbox for trusted add-on code.
 
@@ -34,4 +34,4 @@ Public synthetic tests cover deterministic preparation, source preservation, dep
 
 A local test built four original creator packages and inserted the generated members plus the single startup call into an owned client copy. Importing the shipped game module registered two working modules, skipped a broken module and its dependent, and attached the shared bridge. Two native windows opened through simulated session notifications and cleaned up correctly. A second client process with safe mode passed with the runtime/bridge members deliberately absent and a payload that would raise if imported. Both ran under embedded Python 2.7.6, attempted no server connections and left original source packs unchanged; the temporary pack changes were restored in the copies.
 
-This validates the local game-module import insertion and environment switch, not normal launcher navigation, login, map transitions or connected gameplay. Before enabling real installation, review the exact client build and startup/pack baseline, integrate the launcher switch, verify the server compiler/inventory and active deployment receipt, and implement coordinated attachment/deployment recovery. Private game files, tooling inputs and raw reports remain local.
+This validates the local game-module import insertion and environment switch, not normal launcher navigation, login, map transitions or connected gameplay. The coordinator now provides baseline checks and combined recovery. Normal launcher safe-mode/update integration and broader connected-game acceptance remain separate release gates. Private game files, tooling inputs and raw reports remain local.

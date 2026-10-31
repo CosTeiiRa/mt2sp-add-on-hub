@@ -76,7 +76,7 @@ def _inventory(root):
     return files
 
 
-def fingerprint_tree(root):
+def fingerprint_tree(root, *, excluded=frozenset()):
     # Callers first confine the tree root. Empty directories are not build inputs.
     info = root.lstat()
     require(stat.S_ISDIR(info.st_mode) and not getattr(info, 'st_file_attributes', 0) & 0x400,
@@ -84,6 +84,8 @@ def fingerprint_tree(root):
     before = _inventory(root)
     total, files = 0, {}
     for relative in sorted(before):
+        if relative in excluded:
+            continue  # Only coordinator-owned, separately verified outputs may be excluded.
         path = confined(root, relative)
         require(_stamp(path.lstat()) == before[relative], 'baseline_changed',
                 'Build inputs changed during inspection; retry while the launcher is idle.')

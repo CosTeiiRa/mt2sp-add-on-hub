@@ -1,6 +1,6 @@
 # Experimental package and recovery foundation
 
-This is the M1 package and synthetic installation foundation. It provides an offline package engine and an explicitly initialized synthetic filesystem target. Client/server labels identify separate fixture directories; no game code, quest compilation, Docker deployment or native client runtime is invoked. The [minimal real-game integration](MINIMAL_GAME_INTEGRATION.md) is defined for the next implementation stage.
+This is the M1 package and synthetic installation foundation. It provides an offline package engine and an explicitly initialized synthetic filesystem target. Client/server labels identify separate fixture directories; no game code, quest compilation, Docker deployment or native client runtime is invoked. This document describes the synthetic core; the separate [experimental game coordinator](GAME_INSTALLATION.md) now implements the reviewed client/quest path.
 
 ## Implemented scope
 

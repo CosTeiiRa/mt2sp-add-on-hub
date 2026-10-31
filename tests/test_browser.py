@@ -9,7 +9,7 @@ import unittest
 from unittest.mock import Mock, patch
 
 from helpers import package
-from mt2sp_hub.browser import LocalServer, Session
+from mt2sp_hub.browser import Handler, LocalServer, Session
 from mt2sp_hub.core.packages import MAX_ARCHIVE
 from mt2sp_hub.errors import HubError
 from mt2sp_hub.installation.manager import Manager, initialize
@@ -260,6 +260,16 @@ class BrowserTests(unittest.TestCase):
         self.assertTrue(session.idle.is_set())
         self.assertFalse(session.snapshot()['busy'])
         self.assertNotIn('invented-private-detail', session.snapshot()['message'])
+
+    def test_trickling_upload_has_a_total_deadline_not_only_an_idle_timeout(self):
+        handler = object.__new__(Handler)
+        handler.rfile = Mock()
+        handler.rfile.read1.return_value = b'x'
+        with patch('mt2sp_hub.browser.time.monotonic', side_effect=[0, 0, 61]):
+            with self.assertRaises(HubError) as found:
+                handler.read_body(2)
+        self.assertEqual(found.exception.code, 'upload_timeout')
+        handler.rfile.read1.assert_called_once_with(2)
 
 
 if __name__ == '__main__':

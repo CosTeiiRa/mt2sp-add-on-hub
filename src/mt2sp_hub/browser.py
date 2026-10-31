@@ -203,7 +203,9 @@ class Handler(BaseHTTPRequestHandler):
         chunks = []
         while size:
             require(time.monotonic() < deadline, 'upload_timeout', 'Upload timed out. Choose the ZIP again.')
-            block = self.rfile.read(min(size, 65536))
+            # Return after one socket read so trickling bytes cannot indefinitely
+            # reset the idle timeout inside a full-buffer read.
+            block = self.rfile.read1(min(size, 65536))
             require(block, 'upload_incomplete', 'Upload was interrupted. Choose the ZIP again.')
             size -= len(block)
             if stream is None:

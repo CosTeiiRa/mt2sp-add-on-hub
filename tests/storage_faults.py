@@ -46,6 +46,9 @@ class FaultyStream:
 @contextmanager
 def write_fault(target, stage):
     """Interrupt one destination's real temporary-file write or replacement."""
+    # Windows runners may spell their temporary directory with an 8.3 alias.
+    # The coordinator resolves it; target the same file regardless of spelling.
+    target = Path(target).resolve()
     original_write = storage.atomic_write
     original_open = Path.open
     original_fsync = os.fsync
@@ -68,7 +71,7 @@ def write_fault(target, stage):
             os._exit(73)
 
     def write(path, raw, **kwargs):
-        if path != target:
+        if Path(path).resolve() != target:
             return original_write(path, raw, **kwargs)
         with ExitStack() as patches:
             patches.enter_context(patch.object(Path, 'open', open_stream))

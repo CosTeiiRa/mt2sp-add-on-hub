@@ -13,7 +13,8 @@ class StorageTests(unittest.TestCase):
             with self.subTest(stage=stage), tempfile.TemporaryDirectory() as temporary:
                 target = Path(temporary) / 'record.json'
                 target.write_bytes(b'Original complete record')
-                with write_fault(target, stage), self.assertRaises(OSError):
+                alias = target.parent / '..' / target.parent.name / target.name
+                with write_fault(alias, stage), self.assertRaises(OSError):
                     storage.atomic_write(target, b'Replacement complete record')
                 self.assertEqual(target.read_bytes(), b'Original complete record')
                 self.assertEqual(list(target.parent.glob('.hub-*.tmp')), [])

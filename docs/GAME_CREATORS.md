@@ -61,6 +61,32 @@ Keep the quest name stable: real quests may use it to identify saved progress. P
 
 The [isolated compiler helper](QUEST_COMPILATION.md) now verifies exact compiler inputs, runs one fixed recipe and returns validated artifacts with a private preparation receipt. A local native test compiled an original greeting plus dialog/timer examples, rejected malformed source and proved timeout cleanup. It used copied inputs, temporary memory storage and no network or host/world-data mounts. No compiler binaries, function lists, private build fingerprints or container details are published here. This demonstrates preparation, not deployment, loading or compatibility with another build. A creator-facing compile command and useful source-line diagnostics remain future work.
 
+## A small teaching sequence
+
+Keep a first example to one useful idea before adding new platform capabilities:
+
+| Example | Components | What it should demonstrate |
+| --- | --- | --- |
+| Session timer | Client | Registration, a window, pausing across game views and cleanup |
+| One-time hunt quest | Server | Namespaced progress, authoritative kill events and guarded reward claims |
+| Short mount trial with a status panel | Combined | Optional client information beside an authoritative server feature |
+
+An appearance that is already correctly mapped and available locally may need
+only a quest and ordinary client Python. Verify that first. Do not add a general
+data writer or native patch system merely because a larger mount collection might
+eventually need one. Extra appearances, bonuses, seals and mounted combat each
+need their own capability and lifecycle evidence.
+
+For every example, include a short guide, manifest, original sources, expected
+behavior, a version-bump/update exercise, and disable/removal checks. Keep the
+guide and tests outside the strict package source directory. Buildability,
+compiler success, native UI behavior and connected gameplay are separate checks.
+
+Quest progress retention is useful, but does not make rewards transactional.
+A flag write and an item award are separate engine operations. Test ordinary
+repeat claims and explicitly record untested engine-crash boundaries. Hub's
+deployment rollback must never be described as undoing player rewards.
+
 ## Runtime boundary and remaining work
 
 The [standalone runtime](../src/mt2sp_hub/client_runtime.py) has no Studio imports, game-class patching, physical source lookup or installation logic. The new [startup bundle](CLIENT_STARTUP.md) prepares verified enabled-package source maps and loads them in dependency order before gameplay. The separate [shared lifecycle bridge](CLIENT_HOOKS.md) connects a verified game class's `Open`/`Close` to runtime notifications on the UI thread. Authors do not install these hooks. `shutdown()` disposes registrations and windows. The bootstrap's environment safe-mode switch bypasses payload/runtime imports entirely; recoverable pack installation is implemented; a normal launcher safe-mode control remains future work.

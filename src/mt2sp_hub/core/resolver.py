@@ -52,6 +52,6 @@ def resolve(packages, apis=None, capabilities=None):
 
 
 def selection_changes(before, after):
-    """Describe the actual prepared selection for CLI and desktop review."""
+    """Describe the actual prepared selection for CLI and interface review."""
     return [{'id': ident, 'before': before.get(ident), 'after': after.get(ident)}
             for ident in sorted(set(before) | set(after)) if before.get(ident) != after.get(ident)]

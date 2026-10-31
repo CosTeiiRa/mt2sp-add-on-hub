@@ -2,22 +2,23 @@
 
 A standalone platform under development for managing client, server and combined add-ons for Metin2 Singleplayer.
 
-**Status: experimental foundation.** The offline Python core validates component packages and manages reviewed file transactions in explicitly initialized synthetic sandboxes. It includes installation state, dependency/ownership checks, process locking and interruption recovery. An experimental real client/quest coordinator and a small desktop interface are available for one reviewed build. A standalone installer, independent usability acceptance and a stable public SDK remain future milestones.
+**Status: experimental foundation.** The offline Python core validates component packages and manages reviewed file transactions in explicitly initialized synthetic sandboxes. It includes installation state, dependency/ownership checks, process locking and interruption recovery. An experimental real client/quest coordinator and a local browser interface are available for one reviewed build. A standalone installer, independent usability acceptance and a stable public SDK remain future milestones.
 
 The first usable release must support all three module types. It will target Windows with a local Metin2SP Docker installation. The game remains responsible for gameplay, its launcher and official updates. Installed modules should work with Hub closed.
 
-## Open the desktop preview
+## Open the browser preview
 
-With Python 3.11+ including Tcl/Tk, install from this checkout once:
+With Python 3.11+, install from this checkout once:
 
 ```powershell
 python -m pip install -e ".[game]"
-mt2sp-hub-ui
+mt2sp-hub serve
 ```
 
-Choose a game folder, import an add-on ZIP, review the changes and confirm.
-Enable, disable, removal and interruption recovery use the same window and the
-same engine as the CLI. See the [desktop guide](docs/DESKTOP.md). This preview
+Hub opens in your browser. Paste a game folder path, choose an add-on ZIP, review
+the changes and confirm. Keep the local launcher running while using the page.
+Enable, disable, removal and interruption recovery use the same page and the
+same engine as the CLI. See the [browser guide](docs/BROWSER.md). This preview
 still needs Python setup; a self-contained Windows installer is future work.
 
 ## Create a first example

@@ -6,6 +6,7 @@ NOTICE.md
 README.md
 config/public-files.txt
 docs/ARCHITECTURE.md
+docs/BROWSER.md
 docs/CLIENT_FILES.md
 docs/CLIENT_HOOKS.md
 docs/CLIENT_STARTUP.md
@@ -28,6 +29,7 @@ sdk/schemas/addon-v2.schema.json
 src/mt2sp_hub/__init__.py
 src/mt2sp_hub/__main__.py
 src/mt2sp_hub/authoring.py
+src/mt2sp_hub/browser.py
 src/mt2sp_hub/cli.py
 src/mt2sp_hub/client_bootstrap.py
 src/mt2sp_hub/client_hooks.py
@@ -37,7 +39,6 @@ src/mt2sp_hub/core/packages.py
 src/mt2sp_hub/core/resolver.py
 src/mt2sp_hub/core/validation.py
 src/mt2sp_hub/core/versions.py
-src/mt2sp_hub/desktop.py
 src/mt2sp_hub/errors.py
 src/mt2sp_hub/installation/__init__.py
 src/mt2sp_hub/installation/baseline.py
@@ -55,19 +56,23 @@ src/mt2sp_hub/installation/probe.py
 src/mt2sp_hub/installation/quests.py
 src/mt2sp_hub/installation/runtime_probe.py
 src/mt2sp_hub/installation/storage.py
+src/mt2sp_hub/web/app.js
+src/mt2sp_hub/web/index.html
+src/mt2sp_hub/web/style.css
+src/mt2sp_hub/workflow.py
 tests/crash_worker.py
 tests/game_crash_worker.py
 tests/game_fixture.py
 tests/helpers.py
 tests/storage_faults.py
 tests/test_baseline.py
+tests/test_browser.py
 tests/test_cli.py
 tests/test_client_files.py
 tests/test_client_hooks.py
 tests/test_client_runtime.py
 tests/test_client_startup.py
 tests/test_compiler.py
-tests/test_desktop.py
 tests/test_game_creators.py
 tests/test_game_lifecycle.py
 tests/test_game_server.py
@@ -80,6 +85,7 @@ tests/test_quests.py
 tests/test_runtime_probe.py
 tests/test_storage.py
 tests/test_storage_recovery.py
+tests/test_workflow.py
 tools/check_public_tree.py
 tools/measure_foundation.py
 tools/review_game_baseline.py

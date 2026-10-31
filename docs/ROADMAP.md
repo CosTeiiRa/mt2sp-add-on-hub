@@ -6,7 +6,7 @@ Build a reliable standalone extension platform before growing the add-on catalog
 
 ## Product commitments
 
-- Hub works without Studio, a private repository, a hosted account or a running catalog service.
+- Hub uses a browser interface backed by a local service, independent of Studio, private repositories, hosted accounts and catalogs.
 - Initial support is Windows and a local Metin2SP Docker world. Remote servers, VPS administration and multiple administrators are later work.
 - The Hub repository owns the platform, SDK and small synthetic examples. Usable add-ons will live in the future `mt2sp-add-on-library` with independent releases.
 - Official game updates remain available independently. Unsupported modules are reported and kept inactive where the integration permits; Hub does not pin users to an old game build.
@@ -17,11 +17,11 @@ Build a reliable standalone extension platform before growing the add-on catalog
 
 ## Next practical steps
 
-Latest increment: the [desktop preview](DESKTOP.md) wraps the [experimental real-game coordinator](GAME_INSTALLATION.md) for one reviewed build pair. Public pack composition, persistent-world attachment, isolated quest compilation, combined activation and journaled recovery remain shared with the CLI. Standalone packaging, broader gameplay acceptance and official updater coordination are still ahead.
+Latest increment: the [browser preview](BROWSER.md) wraps the [experimental real-game coordinator](GAME_INSTALLATION.md) for one reviewed build pair. Public pack composition, persistent-world attachment, isolated quest compilation, combined activation and journaled recovery remain shared with the CLI. Standalone packaging, broader gameplay acceptance and official updater coordination are still ahead.
 1. **Make the creator loop usable now.** Implemented: `new`, edit, `build`, then reviewed sandbox installation for synthetic files. [Creator guide](CREATING_ADDONS.md). Experimental [`--profile game` starters](GAME_CREATORS.md) now generate a client window, a server greeting quest or both; these use the experimental reviewed game installation path. All starters share one format; no manual checksum maintenance.
 2. **Keep the M1 checks as regression gates.** Completed: actual 2,048-file/128-package lifecycles, exact byte boundaries, full-size measurements and interrupted-write recovery; see [foundation evidence](FOUNDATION.md). All limits apply together, including disabled packages in the selected-cache budget.
 3. **Prove small real examples.** The [game lifecycle guide](GAME_INSTALLATION.md) records connected window/quest behavior and interrupted recovery on the reviewed build. Broaden gameplay acceptance, add normal launcher/update coordination and run independent creator trials before a public alpha. Future content resources should follow concrete add-ons, not a general plug-in framework.
-4. **Make installation understandable.** The [first desktop window](DESKTOP.md) now wraps the same engine: select installation, import package, review, install; then enable/disable/remove and recovery. It keeps reviews tied to the selected folder and consumes them after confirmation. A standalone Windows installer and independent operator trial remain before M5 acceptance.
+4. **Make installation understandable.** The [local browser interface](BROWSER.md) now wraps the same engine: select installation, import package, review, install; then enable/disable/remove and recovery. One local service keeps reviews tied to the selected folder, rejects stale tabs and consumes reviews after confirmation. The desktop UI has been removed. Simpler Windows startup and an independent operator trial remain before M5 acceptance; decide the next increment after reviewing the browser refactor.
 5. **Let other people try it.** A new creator follows public documentation to build and update an add-on; a new user installs and removes it without a terminal. Record where they need help and simplify those steps before the public alpha and library work.
 
 The current snapshot is an engineering preview. The creator loop has synthetic tests and a connected harmless window/quest rehearsal; ordinary-user usability and independent creator acceptance are not yet demonstrated. These steps refine the milestones below rather than adding another framework or release track.

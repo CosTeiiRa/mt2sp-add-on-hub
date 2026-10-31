@@ -1,15 +1,13 @@
-"""Desktop decisions tested against the real engines and invented game data."""
+"""Shared interface decisions tested against the real engines and invented game data."""
 from pathlib import Path
-from threading import Event
 import tempfile
-import time
 import unittest
 from unittest.mock import patch
 
 from helpers import package
 from game_fixture import addon, environment
 from mt2sp_hub.cli import main
-from mt2sp_hub.desktop import Workflow, Worker, command, failure
+from mt2sp_hub.workflow import Workflow, command, failure
 from mt2sp_hub.errors import HubError
 from mt2sp_hub.installation.game_manager import GameManager, attach
 from mt2sp_hub.installation.manager import Manager, initialize
@@ -18,7 +16,7 @@ from mt2sp_hub.installation.manager import Manager, initialize
 HEALTHY = {'folder_binding': 'matched', 'server': 'running', 'health': 'healthy'}
 
 
-class DesktopWorkflowTests(unittest.TestCase):
+class WorkflowTests(unittest.TestCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
@@ -201,31 +199,13 @@ class DesktopWorkflowTests(unittest.TestCase):
         self.assertTrue(Manager(self.sandbox).status()['recovery_required'])
         self.assertIsNone(self.flow.review)
 
-    def test_cli_gui_dispatch_does_not_require_tk_in_the_other_commands(self):
-        with patch('mt2sp_hub.desktop.launch', return_value=0) as launch:
-            self.assertEqual(main(['gui', '--root', str(self.sandbox)]), 0)
-        launch.assert_called_once_with(self.sandbox)
+    def test_cli_browser_dispatch_and_compatibility_alias(self):
+        for name in ('serve', 'gui'):
+            with patch('mt2sp_hub.browser.launch', return_value=0) as launch:
+                self.assertEqual(main([name, '--root', str(self.sandbox), '--no-open']), 0)
+            launch.assert_called_once_with(self.sandbox, open_browser=False)
 
-    def test_worker_serializes_operations_and_redacts_unexpected_failures(self):
-        worker = Worker()
-        gate = Event()
-        self.addCleanup(gate.set)
-        worker.start(lambda: gate.wait(5) or 'done')
-        self.assertTrue(worker.busy)
-        self.assert_code('desktop_busy', lambda: worker.start(lambda: None))
-        gate.set()
-        deadline = time.monotonic() + 5
-        while worker.poll() is None and time.monotonic() < deadline:
-            time.sleep(0.01)
-        self.assertFalse(worker.busy)
-        worker.start(lambda: (_ for _ in ()).throw(OSError('invented-private-detail')))
-        result = None
-        deadline = time.monotonic() + 5
-        while result is None and time.monotonic() < deadline:
-            result = worker.poll()
-            time.sleep(0.01)
-        self.assertTrue(result[1])
-        self.assertNotIn('invented-private-detail', result[0])
+    def test_failure_redacts_unexpected_details(self):
         self.assertNotIn('invented-private-detail', failure(ValueError('invented-private-detail')))
 
 

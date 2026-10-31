@@ -15,9 +15,10 @@ game = ["lzokay==2.1.0"]
 
 [project.scripts]
 mt2sp-hub = "mt2sp_hub.cli:main"
-
-[project.gui-scripts]
-mt2sp-hub-ui = "mt2sp_hub.desktop:main"
+mt2sp-hub-ui = "mt2sp_hub.browser:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+mt2sp_hub = ["web/*.html", "web/*.css", "web/*.js"]

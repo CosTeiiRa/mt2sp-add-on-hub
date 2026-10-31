@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MT2SP Add-on Hub</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <div><p class="eyebrow">METIN2 SINGLEPLAYER <span>LOCAL PREVIEW</span></p>
+        <h1>Add-on Hub</h1><p>Manage your add-ons. Keep your game yours.</p></div>
+      <button id="stop" class="quiet" disabled>Stop Hub</button>
+    </header>
+    <div id="notice" role="status" aria-live="polite">Connecting to your local Hub...</div>
+    <section class="card" aria-labelledby="folder-title">
+      <div class="section-title"><h2 id="folder-title">1. Choose your game</h2><span id="kind">Engineering preview</span></div>
+      <p>Use a disposable test installation while this preview is being tested.</p>
+      <label for="folder">Game folder</label>
+      <div class="folder-row"><input id="folder" type="text" autocomplete="off" spellcheck="false"
+        placeholder="Paste the full path to your game folder" aria-describedby="folder-help" disabled>
+        <button id="select" disabled>Check folder</button></div>
+      <p id="folder-help" class="hint">Copy the folder path from File Explorer's address bar. It stays on this computer.</p>
+      <p id="selected-folder" class="path"></p>
+      <div class="actions"><button id="check" class="quiet" disabled>Check again</button>
+        <button id="attach" class="quiet" disabled>Review setup</button>
+        <button id="recover" class="quiet" disabled>Review recovery</button></div>
+    </section>
+    <div class="columns">
+      <section class="card" aria-labelledby="addons-title">
+        <h2 id="addons-title">2. Manage add-ons</h2>
+        <p>Choose an add-on ZIP to install or update. Review its changes before anything is applied.</p>
+        <label for="archive">Add-on ZIP</label>
+        <div class="upload-row"><input id="archive" type="file" accept=".zip,application/zip" disabled>
+          <button id="import" disabled>Review ZIP</button></div>
+        <p class="hint">Use packages from creators you trust. Add-ons run code inside the game.</p>
+        <h3>Installed add-ons</h3>
+        <p id="empty">Check a game folder to see its add-ons.</p>
+        <div class="table-scroll"><table id="installed" hidden>
+          <caption class="sr-only">Installed add-ons and available actions</caption>
+          <thead><tr><th scope="col">Add-on</th><th scope="col">State</th><th scope="col">Actions</th></tr></thead>
+          <tbody id="packages"></tbody></table></div>
+      </section>
+      <section class="card review" aria-labelledby="review-title">
+        <div class="section-title"><h2 id="review-title">3. Review and confirm</h2><span id="review-state">No review</span></div>
+        <pre id="details" tabindex="0">Choose a folder to begin. Hub checks it before offering setup or add-on changes.</pre>
+        <div class="actions"><button id="confirm" disabled>Confirm reviewed operation</button>
+          <button id="cancel" class="quiet" disabled>Cancel review</button></div>
+        <p class="hint">Close the game client before applying. Player progress and earned rewards are kept.</p>
+      </section>
+    </div>
+    <footer>Everything runs locally. Keep the launcher running while using Hub.
+      Closing this tab does not stop an operation. Installed add-ons work with Hub stopped.</footer>
+    <noscript>This interface needs JavaScript. The Hub command-line tools remain available.</noscript>
+  </main>
+</body>
+</html>

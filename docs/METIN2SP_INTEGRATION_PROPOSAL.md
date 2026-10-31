@@ -110,7 +110,7 @@ For the first conversation, the creator-facing outcome is simple: one documented
 
 The [official baseline review](GAME_BASELINE.md) now gives this request a concrete input boundary: client executable/root pack/configuration/runtime DLLs, the protected server build tree, compiler and stock function list. Update archives alone omit stock quest objects and the function list. Please publish a machine-readable full-baseline digest/inventory together with the update's exact compiler inputs and effective quest inventory (stock plus official overlays/removals). A source commit's older update manifest should not serve as the release asset receipt. This would replace manual archive composition and make supported-build checks easier to maintain; no game source disclosure is needed.
 
-The current Hub probe can associate one Docker game container with a selected folder and observe its state/health. It cannot establish the persistent world or prove that a particular quest deployment is active. This is the concrete gap behind U01 and U06, not a request for a new hosted service.
+The read-only Hub probe associates one Docker game container with a selected folder and observes its state/health. The experimental installation adapter now separately checks the existing persistent world ID, engine and effective quest inventory. An official receipt would replace these build-specific observations and could confirm successful quest loading, which container health and file hashes alone cannot prove. This is the concrete gap behind U01 and U06, not a request for a new hosted service.
 
 Propose two small interfaces: a read-only build descriptor shipped with the game, and a read-only `status --json` operation supplied by the launcher/server. Names below are discussion examples, not existing commands or supported SDK fields.
 
@@ -209,6 +209,12 @@ The remaining coordination gap is a launcher/updater lock and a stable
 world-specific image/deployment reference. An ordinary image rebuild must not
 silently invalidate another tool's recovery target. A small shared lock and
 revision receipt would be sufficient; a hosted service is unnecessary.
+
+Please document the effective authentication/channel endpoints as part of the
+local launcher contract. A published Docker port range does not by itself change
+the engine's listening ports. A test can pass container health and authentication
+while failing the subsequent game connection. Endpoint details should stay local
+and be excluded from public diagnostic reports.
 
 Mounts are the next concrete content use case: document activation, bonus-ID
 types, duration/expiry, mounted-attack support and active-effect cleanup for

@@ -105,6 +105,34 @@ plans, moved claims, changed worlds/images, low disk space and external edits.
 Real deployment tests use separately owned official client/server copies; no
 game files, local identifiers, credentials or raw reports are published.
 
+On 31 October 2026, an original combined window/login-counter add-on was tested
+in a separately owned official Windows/local-Docker world on the build pair
+above. Test-only startup/login instrumentation automated native connections;
+the actual selection, loading, gameplay and installed Hub hooks executed. Each
+probe restored the exact managed client pack afterward. The quest counter was
+read from the test database after disconnect, never seeded as test evidence.
+
+| Step | Observed connected behavior |
+| --- | --- |
+| Install | Window appeared; the quest saved visit 1 |
+| Update to a new package version | Window appeared; visits continued from 1 to 2 |
+| Disable | Original client pair restored; no add-on window; visits stayed at 2 |
+| Re-enable | Window returned; visits continued from 2 to 3 |
+| Interrupted removal and recovery | Previous installed generation restored; window returned; visits continued from 3 to 4 |
+| Remove | Exact original client pair and stock quest inventory restored; native login succeeded without the window; visits stayed at 4 |
+
+The removal process was terminated after writing both components. Recovery was
+then terminated after restoring one client file. A fresh recovery completed the
+rollback and passed another connected login. The persistent world and all three
+named volumes remained the same.
+Final state contained no installed packages or owned quest files and no pending
+recovery. Backups, images and namespaced player progress were retained.
+
+This is evidence for the harmless example, not rewards, mounted combat or
+arbitrary modules. The rehearsal did not validate normal launcher navigation,
+official updates, map transitions, long sessions or independent creator/user
+usability. Controlled process exits do not simulate hardware power loss.
+
 `deployment_files_verified` reports the installed files/runtime checks above.
 `gameplay_verified` stays false in routine status: health and hashes cannot prove
 that arbitrary author code behaves correctly. Connected play, quest behavior
@@ -113,10 +141,12 @@ and rewards require separate testing for each add-on.
 There is no launcher/updater lock shared with Metin2SP yet. Do not rebuild images,
 update the game, or run another manager during installation/recovery. An external
 rebuild that changes the recorded image ID is detected as drift; Hub does not
-silently adopt it. Remove add-ons before a planned official update and wait for
-the new build to be reviewed before reattaching. No automatic build migration,
-relocation, remote server management, binary patching, catalog or management UI
-is included. Independent creator usability trials remain a public-alpha gate.
+silently adopt it. Existing attachments cannot yet migrate across official builds;
+running `attach` again does not adopt an updated baseline. Test a newly reviewed
+build in a fresh, separate installation and retain the old world and recovery
+records. Build migration, relocation, remote server management, binary patching,
+catalog and management UI are not included. Independent creator usability trials
+remain a public-alpha gate.
 
 The smallest upstream improvements are recorded in the
 [developer proposal](METIN2SP_INTEGRATION_PROPOSAL.md): a stable loader/include,

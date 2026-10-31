@@ -187,9 +187,9 @@ One Windows/Python 3.13.7 run on 30 October 2026 observed the following. Timings
 
 The cached profile selects 134,203,878 archive bytes, below the 134,217,728-byte ceiling. Enabling both packages exceeds the active-payload limit and is rejected. Its installation timing refers to the second package; JSON output also records the first install and disable stages. All measured records fit within the independent 8 MiB record limit.
 
-The high-file-count measurements show why installation needs progress and a clear recovery state. Keep the current synchronous writer and conservative limits for now; these results do not justify a parallel writer, background service or a larger limit. Backup/history retention and a disk-space preflight remain part of real deployment work. These tests model software failures and controlled process exits, not hardware power loss.
+The high-file-count measurements show why installation needs progress and a clear recovery state. Keep the current synchronous writer and conservative limits for now; these results do not justify a parallel writer, background service or a larger limit. The game coordinator adds backup/history retention and disk-space preflight. These tests model software failures and controlled process exits, not hardware power loss.
 
-M1's package/synthetic-installation acceptance checks are now covered. The next work is the [defined real adapter and ownership boundary](MINIMAL_GAME_INTEGRATION.md): implement attachment/probing, stage an original client module and quest, and add deployment recovery evidence. The first usable Hub release still requires both real components and connected gameplay acceptance; this development snapshot is not that release.
+M1's package/synthetic-installation acceptance checks are now covered. The [real adapter and ownership boundary](MINIMAL_GAME_INTEGRATION.md) is implemented by the [experimental game coordinator](GAME_INSTALLATION.md), which records separate deployment and gameplay evidence. Broader gameplay and independent creator/user acceptance remain public-alpha gates.
 
 ## Official baseline and real client file steps
 

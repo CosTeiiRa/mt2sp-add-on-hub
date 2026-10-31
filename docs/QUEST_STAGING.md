@@ -1,6 +1,6 @@
 # Quest staging and artifact ownership
 
-Status: experimental preparation helpers, not a game installer. These validators do not run Docker, execute quests, change official files or establish build compatibility. The companion [isolated compiler helper](QUEST_COMPILATION.md) now runs a fixed bounded recipe and passes only successful captured output through the same ownership checks. A future supported adapter must supply reviewed input pins and complete baseline inventories.
+Status: experimental preparation helpers, not a game installer. These validators do not run Docker, execute quests, change official files or establish build compatibility. The companion [isolated compiler helper](QUEST_COMPILATION.md) runs a fixed bounded recipe and passes only successful captured output through the same ownership checks. The [game coordinator](GAME_INSTALLATION.md) supplies reviewed input pins and complete baseline inventories for its one supported build pair.
 
 The implementation is [installation/quests.py](../src/mt2sp_hub/installation/quests.py). Authors continue to use the [game-source starter](GAME_CREATORS.md); no installer scripts or new manifest fields are needed.
 

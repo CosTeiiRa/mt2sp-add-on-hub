@@ -28,6 +28,8 @@ self-contained Windows installer or Start menu installation.
    and local running server before **Review setup** becomes available.
 3. Review setup and confirm. Hub verifies the world and ownership again, retains
    recovery data, and reserves its server image reference. Setup installs no add-ons.
+   If setup stopped before creating ownership records and left only its two lock
+   files, check again and retry setup. Other unknown records remain protected.
 4. Choose **Import ZIP...**. Hub validates and prepares the package; this can
    take several minutes and may compile quests or prepare a local server image.
    It does not activate the package yet. Use packages from creators you trust:

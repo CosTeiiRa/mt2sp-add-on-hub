@@ -83,6 +83,22 @@ def _record(root, name):
     return value['data']
 
 
+def _only_setup_locks(binding):
+    """A failed pre-claim attachment can leave exactly the two regular locks."""
+    for root in (binding.world, binding.client):
+        control = confined(root, CONTROL)
+        if not control.is_dir():
+            return False
+        # Inspect at most two names; arbitrary existing state is never adopted.
+        with os.scandir(control) as entries:
+            first, second = next(entries, None), next(entries, None)
+        if first is None or first.name != 'lock' or second is not None:
+            return False
+        if not stat.S_ISREG(confined(root, CONTROL + '/lock').stat().st_mode):
+            return False
+    return True
+
+
 def ownership(binding):
     """Inspect only the selected roots; never follow paths stored in a record.
 
@@ -101,7 +117,9 @@ def ownership(binding):
         identity_path = confined(binding.world, CONTROL + '/identity.json')
         claim_path = confined(binding.client, CONTROL + '/claim.json')
         if not identity_path.exists():
-            return 'incomplete' if claim_path.exists() else 'unrecognized'
+            if claim_path.exists():
+                return 'incomplete'
+            return 'no_hub_records' if _only_setup_locks(binding) else 'unrecognized'
         identity = _record(binding.world, 'identity.json')
         if identity.get('kind') == 'synthetic':
             return 'synthetic'

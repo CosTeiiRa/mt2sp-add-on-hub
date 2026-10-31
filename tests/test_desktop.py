@@ -143,6 +143,24 @@ class DesktopWorkflowTests(unittest.TestCase):
             self.assert_code('game_build', flow.refresh)
             self.assertFalse((root / 'Serwer/.mt2sp-hub').exists())
 
+    def test_first_setup_can_retry_after_failure_before_ownership_is_created(self):
+        root = self.root / 'invented-game'
+        with environment(root, fresh=True), patch('mt2sp_hub.installation.probe.inspect_runtime', return_value=HEALTHY):
+            (root / 'Serwer/files').mkdir()
+            (root / 'Serwer/files/items.json').write_bytes(b'{}')
+            flow = Workflow()
+            flow.select(root)
+            flow.prepare('attach')
+            with patch('game_fixture.FakeServer.snapshot', side_effect=HubError('server_not_ready', 'Server became unavailable.')):
+                self.assert_code('server_not_ready', flow.confirm)
+            self.assertFalse((root / 'Serwer/.mt2sp-hub/identity.json').exists())
+            self.assertTrue((root / 'Serwer/.mt2sp-hub/lock').exists())
+            reopened = Workflow()
+            reopened.select(root)
+            self.assertTrue(reopened.setup_ready)
+            reopened.prepare('attach')
+            self.assertIn('Hub setup completed.', reopened.confirm())
+
     def test_pending_attachment_and_interrupted_apply_have_the_same_recovery_entry(self):
         def fail(step):
             if step in ('attachment_journal', 'files_written'):

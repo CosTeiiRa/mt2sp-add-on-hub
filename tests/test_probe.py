@@ -188,6 +188,23 @@ class ProbeTests(unittest.TestCase):
         Store(control).envelope('identity.json', {'kind': 'synthetic'})
         self.assertEqual(probe(self.root)['ownership']['status'], 'synthetic')
 
+    def test_only_regular_setup_locks_allow_retry_without_adopting_other_records(self):
+        for root in (self.binding.world, self.binding.client):
+            (root / '.mt2sp-hub').mkdir()
+            (root / '.mt2sp-hub/lock').touch()
+        before = self.snapshot()
+        self.assertEqual(probe(self.root)['ownership']['status'], 'no_hub_records')
+        self.assertEqual(before, self.snapshot())
+        unknown = self.binding.world / '.mt2sp-hub/unknown.json'
+        unknown.write_bytes(b'private-state-sentinel')
+        self.assertEqual(probe(self.root)['ownership']['status'], 'unrecognized')
+        self.assertEqual(unknown.read_bytes(), b'private-state-sentinel')
+        unknown.unlink()
+        lock = self.binding.client / '.mt2sp-hub/lock'
+        lock.unlink()
+        lock.mkdir()
+        self.assertEqual(probe(self.root)['ownership']['status'], 'unrecognized')
+
     def test_linked_file_is_not_followed(self):
         target = self.root / 'Klient/pack/root.data'
         target.unlink()
